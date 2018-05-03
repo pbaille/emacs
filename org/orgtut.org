@@ -1,0 +1,172 @@
+* Org mode tutorial
+
+** Folding
+
+just hit tab on a header
+
+** Headers 
+
+asterisk * marks headers
+M-left right does change depth
+with shift it shifts all sub headers too
+M-dwn up moves header
+
+** Navigation
+
+org-forward-element 
+org-backward-element
+org-mark-ring-push
+org-mark-ring-pop
+
+** Todos [0%]
+
+press shift + right left for toggling
+
+*** TODO stuff
+*** TODO stuff
+ 
+
+* org-mode structure
+
+Text in org is structured by headings, denoted by lines starting with
+one or more * so we are currently in a section!
+
+** A subheading
+Starts with an extra * and so on
+
+
+** navigation
+Headings can be expanded or collapsed by moving to the (sub)heading
+and pressing TAB. S-TAB cycles all headings. You can jump to next and
+previous headings with C-c C-n and C-c C-p respectively.
+
+You can move headings up and down to reorder them with the arrow keys,
+using M-up or M-down. You can change the level of headings with M-left
+and M-right (and use M-S-left and M-S-right to also change the levels
+of and subheadings).
+
+
+** lists
+*** bullet lists
+ - bullet lists can be created like this (start a line with one or
+   more space and a -
+ - pressing M-RET gives you a new bullet
+ - we might also like nested bullets
+   - like this one (I pressed M-RET TAB to indent it)
+   - and another (M-RET now indents to the new level)
+ - the nice thing is that for long lines of text, emacs wraps them
+   so that they line up with the bullet
+ - you can also reorder list items and change indentation using
+   M-up or M-down just like with section headings
+ - you can change bullet style using S-left and S-right
+
+*** numbered lists
+ 1) numbered lists are also possible
+ 2) M-RET gives me a new number
+
+*** checklists [2/5]
+ - [ ] we can even have check lists
+ - [X] M-S-RET gives a new item with a check box
+ - [X] C-c C-c check/unchecks a box
+ - [-] you can have sub items
+   + [X] like this
+   + [ ] that can be checked off individually
+ - [ ] and you can track the number of items by adding [0/0] to the end
+   of a line above a checklist - this updates when you check items off
+
+*** definition lists
+ - definition lists :: these are useful sometimes
+ - item 2 :: M-RET again gives another item, and long lines wrap in a
+      tidy way underneath the definition
+
+
+* Tables
+
+Hopefully you can see straight away that the simple structure provided
+by org-mode gives a nice way to keep an electronic note book.
+
+Often it is nice to include tables in our notes. Org handles this by
+using | to separate columns, and a line of --- (inserted with C-c -)
+to add horizontal lines.
+
+Exercise: start typing in this table below; type the first line in
+verbatim
+ 1) when you get to the "s" of comments, press TAB to go to the next
+    line
+ 2) go up to the previous line and use C-c - to add the row of dashes
+ 3) next enter a few lines of data, using TAB to go through the
+    cells - you should notice the columns changing width as needed
+
+| ID | x |  y | comments       |
+|----+---+----+----------------|
+| A  | 2 |  4 | blah           |
+| B  | 3 |  9 | blah           |
+| C  | 4 | 16 | blah blah blah |
+| D  | 5 | 25 | blah           |
+
+Now, you can move rows and columns around using M-arrow and insert or
+delete rows and columns using M-S-arrow. Try this out now.
+
+** Creating and exporting tables
+You can create an empty table using C-c | to run the command
+org-table-create-or-convert-from-region, which will prompt for table
+dimensions if no region is selected.
+
+The same command can easily convert some text to a table; select the
+following text and use C-c | to run the command
+org-table-create-or-convert-from-region again to convert the text to a
+table
+
+ ID  x   y
+ A   2   4
+ B   3   9
+ C   4  16
+ D   5  25
+
+You can also save tables to their own files by putting the cursor in
+the table and using M-x org-table-export. You'll be asked for a
+file name and a format. For the format, type orgtbl-to and press TAB
+to see the available options (e.g. orgtbl-to-csv will convert to csv
+in the output file).
+
+** Formulae
+You can use formulae to do arithmetic on tables, and use them like a
+spreadsheet. This is something I keep meaning to use more often, but
+don't generally find I need it. One useful command is C-c + which runs
+org-table-sum to sum the numbers in the current column.
+
+For more on this, see e.g. this introduction. Notice that we just
+added a link in our org-mode file - this is a teaser for what we will
+cover next!
+
+
+
+/italic/
+
+*bold*
+
+_aze_
+
+=zer=
+
+~aze~
+
+#+BEGIN_QUOTE
+This block encloses text that you want to appear as a quotation.
+#+END_QUOTE
+
+
+
+#+BEGIN_SRC clojure
+
+;;syntax highlight code blocks
+(def org-src-fontify-natively true)
+(def org-src-fontify-natively 1 {} #{} [] map +)
+(defn zer [aze])
+
+#+END_SRC
+
+
+
+ 
+

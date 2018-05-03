@@ -1,0 +1,77 @@
+* Searching 
+
+C-s + foo , and repeat C-s to gonext and C-S to cycle , C-x C-x to stop
+
+M-x imenu: jump to function by name
+
+M-s o ou M-x occur: regex search, open a new buffer with results (links)
+
+M-s . : isearch forward word under cursor
+
+* Session
+save and restore sessions with 
+desktop-save
+desktop-read
+
+* Folding
+
+hs-hide-all
+
+* General
+
+M-m spacemacs menu
+
+* Selection
+
+M-m v : expand region
+er/mark-inside-pairs
+er/mark-outside-pairs
+
+* Style
+
+M-x list-faces-display 
+M-x describe-face
+
+* Discovering
+
+those items will go into their respective cats when learned
+
+C-o : add a line below
+C-r : search backward
+C-q : let you type anything bypassing potential bindings
+C-d : del forward char
+
+C-h : help menu
+C-j : add line at cursor
+c-k : kill remaining of the line
+C-w : fill region
+C-v and M-v : scroll
+C-l : move around cursor center/down/up cycle
+
+M-l : downcase word
+M-u : uppercase word
+M-a : prev paragraph
+M-u : nxt paragraph
+M-z : kill until char
+M-t : interchange adj words
+M-o : face menu
+M-s : search menu
+M-d : delete word
+M-h : mark paragraph (select)
+M-j : indent new comment line
+
+to be continued.. for M-j k l...
+
+
+* bindings
+
+** keymaps 
+
+(use-local-map (make-sparse-keymap))
+(local-set-key "\C-p" ctl-x-map)
+     
+
+* Installation setup
+
+winum bindings can be commented at .emacs.d/layers/spacemacs/spacemacs-ui/packages.el
+

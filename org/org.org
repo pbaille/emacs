@@ -1,0 +1,74 @@
+* Visibility 
+
+  Tab to cycle visibility on a headline
+  shift-Tab to global cycle
+
+* Links 
+
+** blabla
+  :PROPERTIES:
+  :CUSTOM_ID:       blabla
+  :END:
+popo
+
+<<target>>
+** aze
+aze
+
+** qsd
+aze
+
+[[#blabla]]
+
+[[target]]
+
+[[qsd]]
+
+* Moving things
+
+M-direction is amazing
+
+* Tags                                                            :tag1:tag2:
+
+** Adding a tag                                                        :test:
+
+   M-Ret : ou C-c C-c on a heading
+   C-c C-q in a section
+
+** inheritance                                                      :aze:ert:
+
+   this heding has tags: tag1 tag2 aze ert
+
+** global tags 
+
+   see 'org-tag-persistent-alist
+
+** mutually exclusive tags
+
+   C-c C-c on the following line to activate
+   #+TAGS: { aze zer } ert
+
+*** test                                                            :aze:zer:
+    doesn't seem to work
+
+** Advanced 
+
+   [[file:org.pdf::50][here]] p.60
+
+** TODO Hierarchy 
+
+   #+TAGS: [ parent : child1 child2 ]
+   #+TAGS: [ child1 : grandchild1 ]
+   
+   make a personal global hierarchy 
+
+** Searching!
+
+   M-Ret / m
+   should bind it to s-m later...
+
+*** agenda related stuff 
+    [[file:org.pdf][here]] p.64
+
+
+
