@@ -1,12 +1,9 @@
 
 ;; learning, exemples...  --------------------------------------------------
 
-(comment
- '()
- )
-
-intern "aze" ;-> 'aze
-(symbol-name 'aze) ;-> "aze"
+(comment "ultra basics"
+ (intern "aze")
+ (symbol-name 'aze))
 
 (comment "maps"
 
@@ -282,11 +279,6 @@ intern "aze" ;-> 'aze
         ;(pouet) nescessary to maintain region
         )
 
-
-(comment
- (nv-current! (nv-sel-at))
- (nv-mark! (nv-current)))
-
 (idefun nv-prev (s)
         (or (nv-first? s)
             (save-excursion
@@ -337,6 +329,28 @@ intern "aze" ;-> 'aze
         (nv-current! (funcall f (nv-current))))
 (idefun nv-reverse! ()
         (nv-set! (plupd nv-state :reverse 'not)))
+(idefun nv-next! ()
+        ;; TODO buggy
+        (let ((c (nv-current)))
+          (if (nv-last? c)
+              (nv-mark-current! (let ((next-enc (-> c nv-out nv-next)))
+                                  (if (nv-expr? next-enc)
+                                      (-> next-enc nv-in)
+                                    next-enc)))
+            (nv-mark-current! (nv-next c)))))
+(idefun nv-prev! ()
+        ;; TODO buggy
+        (let ((c (nv-current)))
+          (if (nv-first? c)
+              (nv-mark-current! (let ((prev-enc (-> c nv-out nv-prev)))
+                                  (if (nv-expr? prev-enc)
+                                      (-> prev-enc nv-in nv-last)
+                                    prev-enc)))
+            (nv-mark-current! (nv-prev c)))))
+(idefun nv-out! ()
+        (nv-mark-current! (nv-out (nv-current))))
+(idefun nv-in! ()
+        (nv-mark-current! (nv-in (nv-current))))
 (idefun nv-mark-current! (&optional s)
         (print "mark-current!") 
         (nv-mark! (if s (nv-current! s) (nv-current)))
@@ -384,12 +398,34 @@ intern "aze" ;-> 'aze
         (nv-current! (nv-sel-at))
         )
 
+;;kind of a hack but ok...
+(defvar fold-state :unfolded)
+(defun nv-fold-cycle! (arg)
+        (interactive "p")
+        (cond
+         ((equal fold-state :unfolded)
+          (setq fold-state :folding)
+          (hs-hide-level arg)
+          (nv-mark-current!))
+         ((equal fold-state :folding)
+          (setq fold-state :folded)
+          (hs-hide-block)
+          (nv-mark-current!))
+         ((equal fold-state :folded)
+          (setq fold-state :unfolding)
+          (hs-hide-level arg)
+          (nv-mark-current!))
+         ((equal fold-state :unfolding)
+          (setq fold-state :unfolded)
+          (hs-show-block)
+          (nv-mark-current!))))
+
 (progn "nav-mode"
 
   (defvar nav-mode-map (make-sparse-keymap))
 
   (defun init-escape-keys (x &rest xs)
-    (defmks nav-mode-map x 'nav-mode)
+    (defmks nav-mode-map x (ifn ()(nav-mode -1) (deactivate-mark)))
     (when xs (apply 'init-escape-keys xs)))
   (init-escape-keys
    "<space>" 
@@ -403,13 +439,13 @@ intern "aze" ;-> 'aze
    )
 
   (defmks nav-mode-map
-    "i" (ifn () (nv-upd-current! 'nv-prev) (nv-mark-current!)) ;(nv-marked-mv 'nv-prev)
-    "o" (ifn () (nv-upd-current! 'nv-next) (nv-mark-current!))
+    "i" 'nv-prev! ;(ifn () (nv-upd-current! 'nv-prev) (nv-mark-current!)) ;(nv-marked-mv 'nv-prev)
+    "o" 'nv-next! ;(ifn () (nv-upd-current! 'nv-next) (nv-mark-current!))
     "u" (ifn () (nv-upd-current! 'nv-first) (nv-mark-current!)) 
     "p" (ifn () (nv-upd-current! 'nv-last) (nv-mark-current!))
     "j" (ifn () (nv-upd-current! 'nv-out) (nv-mark-current!))
-    "m" (ifn () (nv-current! (-> (nv-current) nv-out nv-next)) (nv-mark-current!))
-    "k" (ifn () (nv-upd-current! 'nv-in) (nv-mark-current!))
+    "m" (ifn () (nv-upd-current! 'nv-in) (nv-mark-current!)) 
+    "k" (ifn () (nv-current! (-> (nv-current) nv-out nv-next)) (nv-mark-current!))
     "l" (ifn () (nv-current! (-> (nv-current) nv-in nv-last)) (nv-mark-current!))
     "h" (ifn () (nv-reverse!) (nv-mark-current!))
 
@@ -419,6 +455,7 @@ intern "aze" ;-> 'aze
     "v" 'nv-paste!
     "s" 'nv-splice-current!
     "q" 'nv-wrap-current!
+    "<tab>" 'nv-fold-cycle!
 
     )
 
@@ -432,7 +469,7 @@ intern "aze" ;-> 'aze
     :lighter " Nav"
     :keymap nav-mode-map
     :group 'nav)
-  (defks "s-j" 'nav-mode))
+  (defks "s-j" (ifn () (nav-mode 1) (nv-current! (nv-sel-at)))))
 
 (comment
  (abc 1
