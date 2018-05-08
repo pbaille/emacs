@@ -2,6 +2,9 @@
 
 (load "~/Code/Emacs/elisp/utils.el")
 
+;; should kill this dep
+(require 'paredit)
+
 ;; init --------------------------------------------------------
 
 (progn
@@ -28,7 +31,11 @@
 
   ;; style
   (set-face-attribute 'default (selected-frame) :height 130)
-  (setq neo-theme 'arrow))
+  ;(set-fringe-style 'no-fringes)
+  (setq neo-theme 'arrow)
+
+  ;; for the minibuffer not to extend
+  (setq resize-mini-windows nil))
 
 ;; constants --------------------------------------------------
 
@@ -39,6 +46,9 @@
 ;; helpers ----------------------------------------------------
 
 (progn
+
+  (defun dbg (&rest xs)
+    (print (list* xs)))
 
   (idefun defmks (m k f &rest xs)
           (define-key m (kbd k) f)
@@ -79,10 +89,6 @@
      ";[^\n]+\n*" "" s))
 
   (idefun substr+ret (start end)
-          (comment (concat (compact-string
-                            (remove-lisp-comments
-                             (buffer-substring-no-properties start end)))
-                           "\r"))
           (-> (buffer-substring-no-properties start end)
               remove-lisp-comments
               compact-string
@@ -125,18 +131,18 @@
 
   (idefun sp-mark (se)
           (set-mark (sp-get se :end))
-          (goto-char (sp-get se :beg))
-          (enter-marked-state))
+          (goto-char (sp-get se :beg)))
 
   (idefun expand-region-to-enclosing-empty-lines ()
           (sels-goto-beg)
-          (re-search-backward "\n\n")
+          (re-search-backward "\n *\n")
           (forward-char 2)
           (sels-goto-end)
-          (re-search-forward "\n\n")
+          (re-search-forward "\n *\n")
           (backward-char 2))
 
   (idefun se-expand-mark ()
+          (dbg "sels" (sels-get))
           (if (sels-get)
               (if-let ((se (sp-get-enclosing-sexp)))
                   (sp-mark se)
@@ -144,26 +150,30 @@
             (sp-mark (sp-get-thing))))
 
   (idefun se-expand-max ()
+          (print "expand max!")
+          (se-expand-mark)
           (when-let ((se (sp-get-enclosing-sexp)))
             (sp-mark se)
             (se-expand-max)))
-
-  ;;same but with se-mark
-  (idefun sels-top-lvl-sexp ()
-          (defun go ()
-            (when (sp-get-enclosing-sexp)
-              (sp-backward-up-sexp)
-              (go)))
-          (go)
-          (se-mark))
   )
 
 ;; point ------------------------------------------------------
 
 (idefun current-char ()
+
   (buffer-substring
    (point)
-   (1+ (point))))
+   (min (point-max) (1+ (point)))))
+
+(idefun get-prev-char ()
+        (buffer-substring
+         (max (point-min) (1- (point)))
+         (point)))
+
+(idefun get-next-char ()
+        (buffer-substring
+         (min (point-max) (1+ (point)))
+         (min (point-max) (2 + (point)))))
 
 (idefun current-char? (c)
   (equal (current-char) c))
@@ -173,8 +183,20 @@
   (idefun point-on-opening-delimiter? ()
           (member (current-char) opening-delimiters))
 
+  (idefun point-after-opening-delimiter?  ()
+          (member (get-prev-char) opening-delimiters))
+
+  (idefun point-before-opening-delimiter?  ()
+          (member (get-next-char) opening-delimiters))
+
   (idefun point-on-closing-delimiter? ()
           (member (current-char) closing-delimiters))
+
+  (idefun point-after-closing-delimiter?  ()
+          (member (get-prev-char) closing-delimiters))
+
+  (idefun point-before-closing-delimiter?  ()
+          (member (get-next-char) closing-delimiters))
 
   (idefun point-on-delimiter? ()
           (or (point-on-opening-delimiter?)
@@ -222,7 +244,9 @@
                (save-excursion
                  (backward-char)
                  (or (point-on-space-or-newline?)
-                     (point-on-delimiter?))))))
+                     (point-on-delimiter?)))))
+
+  )
 
 (progn "scan" 
 
@@ -256,6 +280,7 @@
 
   (defvar nav-mode-map (make-sparse-keymap))
 
+  ;; not used
   (idefun sp-ceil? ()
           (let ((p (point)))
             (save-excursion
@@ -264,29 +289,86 @@
 
   (defvar pb-tick (float-time))
 
+
+  (defun init-escape-keys (x &rest xs)
+    (defmks nav-mode-map x 'nav-mode)
+    (when xs (apply 'init-escape-keys xs)))
+
+  (init-escape-keys
+   "<space>" 
+   "<escape>" 
+   "<return>"
+   "<backspace>" 
+   "<left>" 
+   "<right>" 
+   "<down>" 
+   "<up>"
+   )
+
+  (defun nomark-mv (f)
+    (ifn ()
+         (deactivate-mark)
+         (f)))
+
+  (defun extend-selection-forward (arg)
+    (interactive "P")
+    (when (not mark-active)
+      (set-mark-command arg))
+    )
+
   ;; TODO finish shift keys
   (defmks nav-mode-map
 
-    "m" 'sp-up-sexp
-    "l" 'sp-down-sexp
-    "i" 'sp-backward-sexp
-    "o" (ifn () (deactivate-mark) (sp-forward-sexp)) ;'sp-forward-sexp
-    "j" 'sp-backward-up-sexp
-    "k" 'sp-backward-down-sexp
+    "m" (nomark-mv 'sp-up-sexp)
+    "l" (nomark-mv 'sp-down-sexp) 
+    "i" (nomark-mv 'sp-backward-sexp)
+    "o" (nomark-mv 'sp-forward-sexp) ;'sp-forward-sexp
+    "j" (nomark-mv 'sp-backward-up-sexp)
+    "k" (nomark-mv 'sp-backward-down-sexp)
     "I"
     (lambda (arg)
       (interactive "P")
       (when (not mark-active) (set-mark-command arg))
+      (cond)
       (if (< (mark) (point))
-          (progn (sp-backward-sexp 2) (sp-forward-sexp))
+          (progn (sp-backward-sexp)
+                 (when (not (equal (point) (mark)))
+                   (sp-backward-sexp)
+                   (sp-forward-sexp)))
         (sp-backward-sexp)))
     "O"
     (lambda (arg)
       (interactive "P")
       (when (not mark-active) (set-mark-command arg))
       (if (> (mark) (point))
-          (progn (sp-forward-sexp 2) (sp-backward-sexp))
+          (progn (sp-forward-sexp)
+                 (when (not (equal (point) (mark)))
+                   (sp-forward-sexp)
+                   (sp-backward-sexp)))
         (sp-forward-sexp)))
+    "I"
+    (lambda (arg)
+      (interactive "P")
+      (when (not mark-active) (set-mark-command arg))
+      (cond)
+      (if (< (mark) (point))
+          (progn (sp-backward-sexp)
+                 (when (not (equal (point) (mark)))
+                   (sp-backward-sexp)
+                   (sp-forward-sexp)))
+        (sp-backward-sexp)))
+    "O"
+    (lambda (arg)
+      (interactive "P")
+      (when (not mark-active) (set-mark-command arg))
+      (if (> (mark) (point))
+          (progn (sp-forward-sexp)
+                 (when (not (equal (point) (mark)))
+                   (sp-forward-sexp)
+                   (sp-backward-sexp)))
+        (sp-forward-sexp)))
+
+
 
     )
 
@@ -317,13 +399,16 @@
 
 ;; term -----------------------------------------------------
 
-(idefun ansi-reset (b)
+(idefun term-launch (&optional name)
+        (ansi-term "/bin/zsh" name))
+
+(idefun term-reset (name)
   (let ((cb (current-buffer))
-        (tbn (concat "*" b "*")))
+        (tbn (concat "*" name "*")))
     (select-window (get-buffer-window tbn))
     (kill-process)
     (kill-buffer tbn)
-    (ansi-term "/bin/zsh" b)
+    (term-launch name)
     (select-window (get-buffer-window cb))))
 
 (idefun term-paste ()
@@ -331,11 +416,13 @@
   (ns-paste-secondary)
   (term-char-mode))
 
+(idefun term-init-local-keys ()
+        (local-set-key (kbd "M-z") 'previous-multiframe-window)
+        (local-set-key (kbd "s-v") 'term-paste))
+
 ;; red ------------------------------------------------------
 
-(progn
-
-  "red+ keymap"
+(progn "red" 
 
   (idefun select-red-block ()
           (se-expand-max)
@@ -345,20 +432,21 @@
           (select-red-block)
           (comint-send-string
            "*red*"
-           (remove-lisp-comments (substr+ret (mark) (point)))))
+           (substr+ret (mark) (point))))
 
   (idefun red-reload-file ()
     (save-buffer)
     (comint-send-string
      "*red*"
-     (concat "do load %" (buffer-file-name (current-buffer)) "\r")))
+     (concat "do load %" (buffer-name) "\r")))
 
   (idefun red-launch ()
     (let (cb (current-buffer))
-      (when (not (get-buffer-window "*red*"))
+      (when (not (get-buffer "*red*"))
         (split-window-below)
         (windmove-down)
-        (ansi-term "/bin/zsh" "red")
+        (term-launch "red")
+        (term-init-local-keys)
         (windmove-up)
         (comint-send-string "*red*" "red\r"))))
 
@@ -374,11 +462,11 @@
         (select-window (get-buffer-window "*red*")))))
 
   (idefun red-relaunch ()
-    (ansi-reset "red")
+    (term-reset "red")
     (sit-for 1)
     (comint-send-string "*red*" "red\r")
     (red-repl-toggle-focus)
-    (red-ext-mode)
+    (term-init-local-keys)
     (red-repl-toggle-focus))
 
   (idefun red-print-doc ()
@@ -387,10 +475,11 @@
 
   (add-hook 'red-mode-hook
             (ifn ()
-                 (print "zzzz")
+                 (print "red-refreshed!")
                  (hs-minor-mode 1)
                  (defmks red-mode-map
-                   ;""
+                                        ;""
+                   "M-f" (ifn () (insert "func[][\n\n]") (backward-char 5))
                    "M-h" 'red-print-doc
                    "M-z" 'red-repl-toggle-focus
                    "C-M-l" 'red-launch
@@ -398,11 +487,27 @@
                    "M-r" 'red-reload-file
                    "M-<" (ifn () (send-line "*red*"))
                    "C-<" (ifn () (send-sel "*red*"))
-                   "s-<" 'red-eval-top-lvl-block)
-                 (print "red extension loaded")))
+                   "s-<" 'red-eval-top-lvl-block
+                   "M-s-≤" 'red-reload-file)))
 
   ;(run-hooks 'red-mode-hook)
   )
+
+;; shen -----------------------------------------------------
+
+(add-hook 'shen-mode-hook
+          (ifn ()
+               (hs-minor-mode 1)
+               (defmks shen-mode-map
+                 ;"M-h" 
+                 "M-z" 'switch-to-shen
+                 "C-M-l" 'inferior-shen
+                                        ;"C-r" 'red-relaunch
+                 ";" (ifn () (insert "\\"))
+                 "M-s-≤" (ifn () (save-buffer) (shen-load-file (buffer-name (current-buffer))))
+                 "M-<" (ifn () (sp-backward-up-sexp) (sp-mark-sexp) (shen-eval-region))
+                 "C-<" 'shen-eval-region
+                 "s-<" 'shen-eval-defun)))
 
 ;; marked state ---------------------------------------------
 
@@ -411,57 +516,11 @@
     "<left>" 'left-char
     "<right>" 'right-char
     "<up>" 'previous-line
-    "<down>" 'next-line))
-
-(idefun enter-marked-state ()
-  (defun exit ()
-    (sels-unmark)
-    (restore-arrow-bindings))
-
-  (defks
-    ;"<backspace>" 'exit
-    ;"<escape>" 'exit
-    ;"<space>" 'exit
-    ;"<mouse-1>" 'exit
-    ;"<mouse-2>" 'exit
-    ;"<wheel-down>" 'exit
-    ;"<wheel-up>" 'exit
-    "<left>" (ifn () (goto-char (point-marker)) (exit))
-    "<right>" (ifn () (goto-char (mark-marker)) (exit))
-    "<up>" (ifn () (previous-line) (exit))
-    "<down>" (ifn () (next-line) (exit)))) 
+    "<down>" 'next-line)) 
 
 ;; sexp -----------------------------------------------------
 
 (progn "sexps"
-
-       (idefun se-mark ()
-               (interactive)
-               (mark-sexp)
-               (enter-marked-state))
-
-       (idefun se-up ()
-               (interactive)
-               (if (sp-get-enclosing-sexp)
-                   (paredit-backward-up))
-               (se-mark))
-
-       (idefun se-down ()
-               (interactive)
-               (paredit-forward-down)
-               (se-mark))
-
-       (idefun se-nxt ()
-               (interactive)
-               (paredit-forward)
-               (paredit-forward)
-               (paredit-backward)
-               (se-mark))
-
-       (idefun se-prev ()
-               (interactive)
-               (paredit-backward)
-               (se-mark))
 
        ;; TODO for better nav
        (idefun se-first? ())
@@ -477,20 +536,22 @@
 
        (idefun kill-current-sexp ()
                (interactive)
-               (se-prev)
-               (paredit-kill))
+               (sp-kill-sexp))
 
        (idefun wrap-current-sexp ()
                (interactive)
-               (se-up)
-               (paredit-wrap-round))
+               (sp-backward-up-sexp)
+               (sp-wrap-with-pair "("))
 
        (idefun copy-current-sexp ()
-               (se-up)
+               (sp-backward-up-sexp)
+               (sp-mark-sexp)
                (ns-copy-including-secondary)
                (throw "bob"))
 
        (idefun wrap-sel-or-sexp (open close)
+               ;(dbg open close (sels-get))
+               ;(dbg (point-on-space-or-newline?) (point-on-closing-delimiter?))
                (cond
 
                 ((sels-get)
@@ -512,20 +573,18 @@
                  (backward-char))
 
                 ('else
-                 (sp-kill-sexp)
                  (insert open)
                  (insert close)
-                 (backward-char)
-                 (yank)
-                 ))))
+                 (backward-char)))))
 
 ;; main edition overides  ----------------------------------
 
 (idefun pb-copy ()
-        (when (not (sels-get)) (se-expand-mark))
+        (when (not (sels-get))
+          (goto-char (end-of-line))
+          (set-mark (beginning-of-line)))
         (kill-ring-save (mark) (point))
-        (throw "needed")
-        (enter-marked-state))
+        (throw "needed"))
 
 (idefun pb-kill ()
         (cond
@@ -541,9 +600,24 @@
          ('else (mc/keyboard-quit))))
 
 (idefun pb-backspace ()
-        (if (sels-get)
-            (sp-kill-region (mark) (point))
-          (sp-backward-delete-char)))
+        
+        (cond
+         ((sels-get)
+          (sp-kill-region (mark) (point)))
+         ('else
+          (paredit-backward-delete))
+
+         ((point-after-opening-delimiter?)
+          (backward-char)
+          (sp-kill-sexp))
+         ((point-before-closing-delimiter?)
+          (backward-char))
+         ('else (sp-backward-delete-char))))
+
+(idefun pb-help ()
+        (if-let ((s (sels-get)))
+            (describe-function (intern s))
+          (call-interactively 'describe-function)))
 
 ;; misc -----------------------------------------------------
 
@@ -573,10 +647,12 @@
 
 ;; bindings ------------------------------------------------
 
+(add-to-list 'sp--lisp-modes 'red-mode)
+
 (defks
 
   ;; chars
-
+  
   "M-l" (ifn () (insert "λ"))
   "M-L" (ifn () (insert "|"))
   "M-/" (ifn () (insert "\\"))
@@ -584,10 +660,13 @@
 
   ;; delimiters
 
-  "(" 'paredit-open-round
-  "s-(" 'paredit-open-square ;(ifn () (wrap-sel-or-sexp "[" "]"))
+  "(" 'paredit-open-round ;
+  ;(ifn () (wrap-sel-or-sexp "(" ")"))
+  "s-(" 'paredit-open-square ;
+  ;(ifn () (wrap-sel-or-sexp "[" "]"))
   ;"(" (ifn () (wrap-sel-or-sexp "(" ")"))
-  "M-(" 'paredit-open-curly ;(ifn () (wrap-sel-or-sexp "{" "}"))
+  "M-(" 'paredit-open-curly ;
+  ;(ifn () (wrap-sel-or-sexp "{" "}"))
 
   ;; windows
 
@@ -603,13 +682,14 @@
 
   ;; cursors
 
-  ;"M-S-<down>" 'mc/mark-next-like-this
-  ;"M-S-<up>" 'mc/mark-previous-like-this
-  ;"M-S-<left>" 'mc/mark-previous-like-this-word
-  ;"M-S-<right>" 'mc/mark-next-like-this-word
+  "M-S-<down>" 'mc/mark-next-like-this
+  "M-S-<up>" 'mc/mark-previous-like-this
+  "M-S-<left>" 'mc/mark-previous-like-this-word
+  "M-S-<right>" 'mc/mark-next-like-this-word
 
   ;; general
 
+  "s-h" 'pb-help
   "s-l" 'helm-buffers-list
   "s-o" 'helm-find-files
   "M-p" 'cycle-buffers
@@ -617,6 +697,7 @@
   "s-:" 'neotree-toggle
   "s-;" 'toggle-helm
   "s-s" 'save-buffer
+  "s-t" 'term-launch
 
   ;; edition
 
@@ -629,7 +710,7 @@
   "M-s-¬" 'indent-region
   "M-a" 'wrap-current-sexp
   "M-c" 'copy-current-sexp
-  "M-s" 'paredit-splice-sexp
+  "M-s" 'sp-splice-sexp
   "C-S-<right>" 'sp-forward-slurp-sexp
   "C-S-<left>" 'sp-backward-slurp-sexp
   "C-S-<up>" 'sp-forward-barf-sexp
@@ -664,9 +745,26 @@
 
   "s-<" 'eval-defun
   "M-<" 'eval-current-sexp
+  "C-<" (ifn () (eval-region (mark) (point)))
   "M-s-≤" (ifn ()
                (save-buffer)
                (call-interactively 'eval-buffer)))
+
+
+
+(sp-with-modes sp--lisp-modes
+  ;; disable ', it's the quote character!
+  (sp-local-pair "'" nil :actions nil)
+  ;; also only use the pseudo-quote inside strings where it serve as
+  ;; hyperlink.
+  (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p))
+  (sp-local-pair "`" nil
+                 :skip-match (lambda (ms mb me)
+                               (cond
+                                ((equal ms "'")
+                                 (or (sp--org-skip-markup ms mb me)
+                                     (not (sp-point-in-string-or-comment))))
+                                (t (not (sp-point-in-string-or-comment)))))))
 
 ;; TODO ----------------------------------------------------
 
