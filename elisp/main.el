@@ -276,114 +276,7 @@
 
 ;; nav mode --------------------------------------------------
 
-(progn
 
-  (defvar nav-mode-map (make-sparse-keymap))
-
-  ;; not used
-  (idefun sp-ceil? ()
-          (let ((p (point)))
-            (save-excursion
-              (sp-backward-up-sexp)
-              (equal p (point)))))
-
-  (defvar pb-tick (float-time))
-
-
-  (defun init-escape-keys (x &rest xs)
-    (defmks nav-mode-map x 'nav-mode)
-    (when xs (apply 'init-escape-keys xs)))
-
-  (init-escape-keys
-   "<space>" 
-   "<escape>" 
-   "<return>"
-   "<backspace>" 
-   "<left>" 
-   "<right>" 
-   "<down>" 
-   "<up>"
-   )
-
-  (defun nomark-mv (f)
-    (ifn ()
-         (deactivate-mark)
-         (f)))
-
-  (defun extend-selection-forward (arg)
-    (interactive "P")
-    (when (not mark-active)
-      (set-mark-command arg))
-    )
-
-  ;; TODO finish shift keys
-  (defmks nav-mode-map
-
-    "m" (nomark-mv 'sp-up-sexp)
-    "l" (nomark-mv 'sp-down-sexp) 
-    "i" (nomark-mv 'sp-backward-sexp)
-    "o" (nomark-mv 'sp-forward-sexp) ;'sp-forward-sexp
-    "j" (nomark-mv 'sp-backward-up-sexp)
-    "k" (nomark-mv 'sp-backward-down-sexp)
-    "I"
-    (lambda (arg)
-      (interactive "P")
-      (when (not mark-active) (set-mark-command arg))
-      (cond)
-      (if (< (mark) (point))
-          (progn (sp-backward-sexp)
-                 (when (not (equal (point) (mark)))
-                   (sp-backward-sexp)
-                   (sp-forward-sexp)))
-        (sp-backward-sexp)))
-    "O"
-    (lambda (arg)
-      (interactive "P")
-      (when (not mark-active) (set-mark-command arg))
-      (if (> (mark) (point))
-          (progn (sp-forward-sexp)
-                 (when (not (equal (point) (mark)))
-                   (sp-forward-sexp)
-                   (sp-backward-sexp)))
-        (sp-forward-sexp)))
-    "I"
-    (lambda (arg)
-      (interactive "P")
-      (when (not mark-active) (set-mark-command arg))
-      (cond)
-      (if (< (mark) (point))
-          (progn (sp-backward-sexp)
-                 (when (not (equal (point) (mark)))
-                   (sp-backward-sexp)
-                   (sp-forward-sexp)))
-        (sp-backward-sexp)))
-    "O"
-    (lambda (arg)
-      (interactive "P")
-      (when (not mark-active) (set-mark-command arg))
-      (if (> (mark) (point))
-          (progn (sp-forward-sexp)
-                 (when (not (equal (point) (mark)))
-                   (sp-forward-sexp)
-                   (sp-backward-sexp)))
-        (sp-forward-sexp)))
-
-
-
-    )
-
-  (comment
-   (+ 1 2 (aze baz [1 2] )
-      (aze baz [1 2])
-      (aze baz [1 2] )))
-
-  (define-minor-mode nav-mode
-    :init-value nil
-    :lighter " Nav"
-    :keymap nav-mode-map
-    :group 'nav)
-
-  (defks "s-j" 'nav-mode))
 
 ;; sending ---------------------------------------------------
 
@@ -531,8 +424,9 @@
 
        (defun eval-current-sexp (x)
          (interactive "P")
-         (goto-char (sp-get (sp-get-enclosing-sexp) :end))
-         (eval-last-sexp x))
+         (save-excursion
+           (goto-char (sp-get (sp-get-enclosing-sexp) :end))
+           (eval-last-sexp x)))
 
        (idefun kill-current-sexp ()
                (interactive)
