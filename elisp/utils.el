@@ -31,6 +31,8 @@
 (defmacro idefun (name args &rest xs)
   `(defun ,name ,args (interactive) ,@xs))
 
+(defun call (f &rest args) (apply 'funcall f args))
+
 (defmacro mexp (f) `(macroexpand ,f))
 
 (defadvice kill-line (after kill-line-cleanup-whitespace activate compile)

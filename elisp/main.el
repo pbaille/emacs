@@ -1,3 +1,5 @@
+;;; main.el --- main config  -*- lexical-binding: t -*-
+
 ;; terminal buffer send text ------------------------------------
 
 (load "~/Code/Emacs/elisp/utils.el")
@@ -35,7 +37,9 @@
   (setq neo-theme 'arrow)
 
   ;; for the minibuffer not to extend
-  (setq resize-mini-windows nil))
+  (setq resize-mini-windows nil)
+
+  )
 
 ;; constants --------------------------------------------------
 
@@ -539,6 +543,11 @@
                    (previous-buffer)
                  (next-buffer))))
 
+(defadvice kill-line (after kill-line-cleanup-whitespace activate compile)
+  "cleanup whitespace on kill-line"
+  (if (not (bolp))
+      (delete-region (point) (progn (skip-chars-forward " \t") (point)))))
+
 ;; bindings ------------------------------------------------
 
 (add-to-list 'sp--lisp-modes 'red-mode)
@@ -601,7 +610,7 @@
   "<backspace>" 'pb-backspace
   "M-<backspace>" 'c-hungry-backspace
 
-  "M-s-¬" 'indent-region
+  "M-s-¬" 'nv-indent-current!
   "M-a" 'wrap-current-sexp
   "M-c" 'copy-current-sexp
   "M-s" 'sp-splice-sexp

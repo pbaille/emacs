@@ -1,9 +1,113 @@
+;;; learn.el --- lerning emacs etc...  -*- lexical-binding: t -*-
 
 ;; learning, exemples...  --------------------------------------------------
 
-(comment "ultra basics"
+(comment "misc"
+
  (intern "aze")
- (symbol-name 'aze))
+ (symbol-name 'aze)
+
+ (setq vec1 [1 5 3 -2 7 -9 3])
+
+ [a b c] ; quoted like '()
+
+ (setq bar '(1 2)) ;⇒ (1 2)
+ (setq x (vector 'foo bar)) ;⇒ [foo (1 2)]
+ (setq y (copy-sequence x))
+ 
+
+ (elt [1 2 3 4] 2) ;nth
+
+ (destructuring-bind (start . end) (cons 'x 'y) (list start end))
+
+ ;; vars have both value and function value
+ (defvar azer 42)
+ (fset 'azer (fn () (print "pouet")))
+ (print azer (azer))
+ 
+)
+
+(comment "car, cdr and co"
+       (setq list1 '(((x y z) 2 3 4) (a b c) (1 2) o p))
+       (car list1)
+       (cadr list1)
+       (cdar list1)
+       (caar list1)
+       (cddr list1)
+       (cdadr list1)
+       (cadaar list1)
+       (cddaar list1))
+
+(comment "seqs"
+        (seq-elt [1 2 3 4] 2)
+        (setq vec [1 2 3 4])(setf (seq-elt vec 2) 5)
+
+        (seqp [1 2])
+        (seqp "ert")
+        (seqp '(a b c))
+
+
+        (seq-into [1 2 3] 'list)
+        (seq-into "hello" 'vector)
+
+        (seq-drop [1 2 3 4 5 6] 3)
+        (seq-take [1 2 3 4 5] 3)
+
+        (seq-subseq '(1 2 3 4 5) 1)
+        (seq-subseq '[1 2 3 4 5] 1 3)
+        (seq-subseq '[1 2 3 4 5] -3 -1)
+
+        (seq-contains '(symbol1 symbol2) 'symbol1)
+        (seq-position '(a b c) 'b)
+
+        (seq-concatenate 'list '(1 2) '(3 4) [5 6]) ;(1 2 3 4 5 6)
+        (seq-concatenate 'string "Hello " "world")  ; "Hello world"
+
+        (seq-min [3 1 2])
+        (seq-max "Hello")
+        (seq-uniq '(1 2 2 1 3))
+        (seq-reverse '(1 2 3 4))
+
+        (seq-take-while (lambda (elt) (> elt 0)) '(1 2 3 -1 -2))
+        (seq-drop-while (lambda (elt) (> elt 0)) '(1 2 3 -1 -2))
+
+        (seq-map #'1+ '(2 4 6))
+        (seq-mapn #'+ '(2 4 6) '(20 40 60))
+        (seq-filter (lambda (elt) (> elt 0)) [1 -1 3 -3 5])
+        (seq-remove (lambda (elt) (> elt 0)) [1 -1 3 -3 5])
+        (seq-reduce #'+ [1 2 3 4] 0)
+
+        (seq-some 'oddp '(1 2 3 4))
+        (seq-find 'oddp '(1 2 3 4))
+
+        (seq-every-p #'numberp [2 4 6])
+        (seq-empty-p "not empty")
+
+        (seq-count (fn (e) (> e 0)) [-1 2 0 3 -2])
+        (seq-sort (fn (a b) (> a b)) [1 5 3 -2 7 -9 3])
+
+        (seq-mapcat #'seq-reverse '((3 2 1) (6 5 4)))
+        (seq-partition '(0 1 2 3 4 5 6 7) 3)
+
+        (seq-intersection [2 3 4 5] [1 3 5 6 7])
+        (seq-difference '(2 3 4 5) [1 3 5 6 7])
+
+        (seq-group-by #'integerp '(1 2.1 3 2 3.2)) ;⇒ ((t 1 3 2) (nil 2.1 3.2))
+        (seq-group-by #'car '((a 1) (b 2) (a 3) (c 4))) ;((b (b 2)) (a (a 1) (a 3)) (c (c 4)))
+
+        (seq-let [first second] [1 2 3 4] (list first second))
+                                        ;(1 2)
+        (seq-let (_ a _ b) '(1 2 3 4) (list a b))
+                                        ;(2 4)
+        (seq-let [a [b [c]]] [1 [2 [3]]] (list a b c))
+                                        ;(1 2 3)
+        (seq-let [a b &rest others] [1 2 3 4] others)
+                                        ;[3 4]
+        (seq-let [[_ _ _ &rest x]] [[1 2 3 4]] x))
+
+(comment "pcase macro"
+         ;https://www.gnu.org/software/emacs/manual/html_node/elisp/Pattern-matching-case-statement.html#Pattern-matching-case-statement
+         )
 
 (comment "maps"
 
@@ -53,7 +157,7 @@
          (hrem (hm :a 1 :b 2 :c 3) :a :c))
  )
 
-(comment "assoc list"
+(comment "assoc list" 
          (setq x
                '(("mary" . 23)
                  ("john" . 24)
@@ -243,6 +347,11 @@
 (defun nv-end-char (s)
   (and (not (nv-empty? s)) (substring (nv-str s) -1 0)))
 
+(idefun nv-mark! (s)
+        (goto-char (nv-beg s))
+        (set-mark (nv-end s)))
+
+;; native predicates
 (defun nv-expr? (s)
   (and (member (nv-beg-char s) delimiters) s))
 (defun nv-word? (s)
@@ -264,69 +373,111 @@
       (sp-backward-down-sexp)
       (sp-backward-sexp)
       (and (equal s (nv-sel-at)) s))))
-(idefun nv-only? (s)
-        (and (nv-first? s) (nv-last? s) s))
 (defun nv-top? (s)
   (and (not (sp-get-enclosing-sexp)) s))
 (defun nv-bottom? (s)
   (nv-word? s))
 
-(idefun nv-mark! (s)
-        ;(deactivate-mark)
-        ;(dbg 'nvmark s)
-        (goto-char (nv-beg s))
-        (set-mark (nv-end s))
-        ;(pouet) nescessary to maintain region
-        )
-
+;; native moves
 (idefun nv-prev (s)
-        (or (nv-first? s)
-            (save-excursion
-              (goto-char (nv-beg s))
-              (sp-backward-sexp)
-              (nv-sel-at))))
+        (and (not (nv-first? s))
+             (save-excursion
+               (goto-char (nv-beg s))
+               (sp-backward-sexp)
+               (nv-sel-at))))
 (idefun nv-next (s)
-        (or (nv-last? s)
-            (save-excursion
-              (goto-char (nv-beg s))
-              (sp-forward-sexp 2)
-              (sp-backward-sexp)
-              (nv-sel-at))))
-(idefun nv-first (s)
-        (or (nv-first? s)
-            (let ((nxt (nv-prev s)))
-              (and (not (equal s nxt)) (nv-first nxt)))
-            s))
-(idefun nv-rfirst (s)
-        (let ((f (nv-first s)))
-          (if (nv-expr? f)
-              (-> f nv-in nv-rfirst)
-            f)))
-(idefun nv-last (s)
-        (or (nv-last? s)
-            (let ((nxt (nv-next s)))
-              (and (not (equal s nxt)) (nv-last nxt)))
-            s))
-(idefun nv-rlast (s)
-        (let ((l (nv-last s)))
-          (if (nv-expr? l)
-              (-> l nv-in nv-rlast)
-            l)))
+        (and (not (nv-last? s))
+             (save-excursion
+               (goto-char (nv-beg s))
+               (sp-forward-sexp 2)
+               (sp-backward-sexp)
+               (nv-sel-at))))
 (idefun nv-out (s)
-        (or (nv-top? s)
-            (save-excursion
-              (sp-backward-up-sexp)
-              (nv-sel-at))))
+        (and (not (nv-top? s))
+             (save-excursion
+               (sp-backward-up-sexp)
+               (nv-sel-at))))
 (idefun nv-in (s)
-        (or (nv-bottom? s)
-            (save-excursion
-              (goto-char (nv-beg s))
-              (sp-down-sexp)
-              (nv-sel-at))))
+        (and (not (nv-bottom? s))
+             (save-excursion
+               (goto-char (nv-beg s))
+               (sp-down-sexp)
+               (nv-sel-at))))
+
+(comment (if-let ((nxt (funcall (nv-mv (cadr xs)) s)))
+             (funcall (apply 'nv-mv (cdddr xs)) s)
+           (funcall (apply 'nv-mv (cddr xs)) s)))
+
+(defun nv-mv (&rest xs)
+
+  (cond
+
+   ((not xs) (fn (s) s))
+
+   ((pb-kw? (car xs))
+    (pcase (car xs)
+      (:or
+       (fn (s)
+           (if-let ((nxt (call (cadr xs) s)))
+               (call (apply 'nv-mv (cdddr xs)) nxt)
+             (call (apply 'nv-mv (cddr xs)) s))))
+
+      (:all
+       (fn (s)
+           (let* ((xs (cddr xs))
+                  (s (seq-reduce
+                      (fn (s m) (and s (call m s)))
+                      (cadr xs)
+                      s)))
+             (call (apply 'nv-mv xs) s))))
+
+      (:any
+       (fn (s)
+           (let* ((mvs (seq-into (cadr xs) 'list))
+                  (xs (cddr xs))
+                  (s (or (call (nv-mv (car mvs)) s)
+                         (and (cdr mvs) (call (nv-mv :any (cdr mvs)) s)))))
+             (call (apply 'nv-mv xs) s))))
+      (:deep
+       (fn (s)
+           (let* ((mv (cadr xs))
+                  (xs (cdr xs))
+                  (s (if-let ((nxt (call mv s)))
+                         (call (nv-mv :rec mv) nxt)
+                       s)))
+             (call (apply 'nv-mv xs) s))))
+      (_ (error "Unknown expression %S" (car xs)))))
+
+    (:else
+    (fn (s)
+        (call (apply 'nv-mv (cdr xs)) (call (car xs) s)) ))))
+
+(comment "tests"
+ (nv-mark-current! (call (nv-mv :or 'nv-next 'nv-prev) (nv-sel-at)))
+ (nv-mark-current! (call (nv-mv :all [nv-next nv-prev]) (nv-sel-at)))
+ (nv-mark-current! (call (nv-mv :any [nv-next nv-prev]) (nv-sel-at)))
+ (nv-mark-current! (call (nv-mv :deep 'nv-prev) (nv-sel-at))))
+
+
+;; deep moves
+(idefun nv-deep-next (s)
+        (let ((nxt (nv-next s)))
+          (if (equal s nxt)
+              nxt
+            (nv-deep-next nxt))))
+(idefun nv-deep-prev (s)
+        (let ((nxt (nv-prev s)))
+          (if (equal s nxt)
+              nxt
+            (nv-deep-next nxt))))
+(idefun nv-deep-in ()
+        (if (nv-expr? s) (nv-deep-in (nv-in s)) s))
+(idefun nv-deep-out (s)
+        (if (nv-top? s) s (nv-deep-out (nv-out s))))
+
+;; nav moves
 (idefun nv-fw (s)
-        (if (nv-last? s)
-            (-> s nv-out nv-fw nv-in)
-          (nv-next s)))
+        ())
 (idefun nv-bw (s)
         (if (nv-first? s)
             (let ((pp (-> s nv-out nv-bw)))
@@ -412,6 +563,10 @@
                 (backward-char)
                 (delete-region p (point))))
             (nv-mark-current! (nv-sel-at))))))
+(idefun nv-indent-current! ()
+        (let* ((c (nv-current!))
+               (c (if (nv-word? c) (nv-out c) c)))
+          (indent-region (nv-beg c) (nv-end c))))
 (idefun nv-paste! ()
         (nv-mark-current!)
         (call-interactively 'delete-region)
