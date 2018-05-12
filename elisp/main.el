@@ -367,7 +367,9 @@
     (red-repl-toggle-focus))
 
   (idefun red-print-doc ()
-    (se-prev)
+    (forward-sexp)
+    (backward-sexp)
+    (mark-sexp)
     (comint-send-string "*red*" (concat "? " (sels-get) "\r")))
 
   (add-hook 'red-mode-hook
@@ -405,6 +407,19 @@
                  "M-<" (ifn () (sp-backward-up-sexp) (sp-mark-sexp) (shen-eval-region))
                  "C-<" 'shen-eval-region
                  "s-<" 'shen-eval-defun)))
+
+;; read only ------------------------------------------------
+
+(idefun erase-read-only-buffer (b)
+        (let ((cw (get-buffer-window (current-buffer))))
+          (select-window (get-buffer-window b))
+          (read-only-mode -1)
+          (erase-buffer)
+          (read-only-mode 1)
+          (select-window cw)))
+
+(idefun erase-messages ()
+        (erase-read-only-buffer "*Messages*"))
 
 ;; marked state ---------------------------------------------
 
@@ -481,8 +496,7 @@
         (when (not (sels-get))
           (goto-char (end-of-line))
           (set-mark (beginning-of-line)))
-        (kill-ring-save (mark) (point))
-        (throw "needed"))
+        (kill-ring-save (mark) (point)))
 
 (idefun pb-kill ()
         (cond
@@ -519,7 +533,7 @@
 
 ;; misc -----------------------------------------------------
 
-(defun toggle-maximize-window () 
+(idefun toggle-maximize-window () 
        (if (= 1 (length (window-list)))
            (jump-to-register '_)
          (progn
@@ -563,13 +577,9 @@
 
   ;; delimiters
 
-  "(" 'paredit-open-round ;
-  ;(ifn () (wrap-sel-or-sexp "(" ")"))
-  "s-(" 'paredit-open-square ;
-  ;(ifn () (wrap-sel-or-sexp "[" "]"))
-  ;"(" (ifn () (wrap-sel-or-sexp "(" ")"))
-  "M-(" 'paredit-open-curly ;
-  ;(ifn () (wrap-sel-or-sexp "{" "}"))
+  "(" 'paredit-open-round 
+  "s-(" 'paredit-open-square
+  "M-(" 'paredit-open-curly
 
   ;; windows
 
@@ -578,25 +588,25 @@
   "C-é" 'split-window-right
   "C-\"" 'split-window-below
   "C-<tab>" 'other-window
-  "s-M-C-<right>" 'windmove-right
-  "s-M-C-<left>" 'windmove-left
-  "s-M-C-<down>" 'windmove-down ;
-  "s-M-C-<up>" 'windmove-up
 
   ;; cursors
 
-  "M-S-<down>" 'mc/mark-next-like-this
-  "M-S-<up>" 'mc/mark-previous-like-this
-  "M-S-<left>" 'mc/mark-previous-like-this-word
-  "M-S-<right>" 'mc/mark-next-like-this-word
+  "C-S-<down>" 'mc/mark-next-like-this
+  "C-S-<up>" 'mc/mark-previous-like-this
+  "C-S-<left>" 'mc/mark-previous-like-this-word
+  "C-S-<right>" 'mc/mark-next-like-this-word
 
   ;; general
 
+
+
   "s-h" 'pb-help
+  "s-g" 'evil-goto-definition
   "s-l" 'helm-buffers-list
   "s-o" 'helm-find-files
   "M-p" 'cycle-buffers
-  "s-f" 'occur
+  "M-m ô" 'spacemacs/helm-project-smart-do-search
+  "M-m M-$" 'spacemacs/helm-project-smart-do-search-region-or-symbol
   "s-:" 'neotree-toggle
   "s-;" 'toggle-helm
   "s-s" 'save-buffer
@@ -608,16 +618,19 @@
   "s-w" 'pb-kill
   "<escape>" 'pb-escape
   "<backspace>" 'pb-backspace
-  "M-<backspace>" 'c-hungry-backspace
+  "s-<backspace>" 'hungry-delete-backward
+  "s-S-<backspace>" 'hungry-delete-forward
 
   "M-s-¬" 'nv-indent-current!
   "M-a" 'wrap-current-sexp
   "M-c" 'copy-current-sexp
   "M-s" 'sp-splice-sexp
-  "C-S-<right>" 'sp-forward-slurp-sexp
-  "C-S-<left>" 'sp-backward-slurp-sexp
-  "C-S-<up>" 'sp-forward-barf-sexp
-  "C-S-<down>" 'sp-backward-barf-sexp
+
+  "C-M-S-<right>" 'sp-forward-slurp-sexp
+  "C-M-S-<left>" 'sp-backward-slurp-sexp
+  "C-M-S-<up>" 'sp-forward-barf-sexp
+  "C-M-S-<down>" 'sp-backward-barf-sexp
+
   ;; toggling
 
   "C-M-<tab>" 'hs-hide-all
@@ -629,20 +642,36 @@
 
   ;; nav
 
-  "s-<up>" 'se-up
-  "s-<down>" 'se-down
-  "s-<right>" 'se-nxt
-  "s-<left>" 'se-prev
+  "M-<up>" 'sp-up-sexp
+  "M-<down>" 'sp-down-sexp
+  "M-<right>" 'sp-forward-sexp
+  "M-<left>" 'sp-backward-sexp
 
-  ;"C-s-m" 'sp-up-sexp
-  ;"C-s-l" 'sp-down-sexp
-  "M-i" 'sp-backward-sexp
-  "M-o" 'sp-forward-sexp
-  ;"C-s-j" 'sp-backward-up-sexp
-  ;"C-s-k" 'sp-backward-down-sexp
+  ;; transient mark sp moves here
+  ;"M-S-<right>"  'sp-forward-slurp-sexp
+  ;"M-S-<left>" 'sp-backward-slurp-sexp
+  ;"M-S-<up>" 'sp-forward-barf-sexp
+  ;"M-S-<down>" 'sp-backward-barf-sexp
 
+  "C-<up>" 'windmove-up
+  "C-<down>" 'windmove-down
+  "C-<right>" 'windmove-right
+  "C-<left>" 'windmove-left
+
+  "s-S-<right>" 'ns-next-frame
+  "s-S-<left>" 'ns-prev-frame
+
+  "s-<right>" 'next-buffer
+  "s-<left>" 'previous-buffer
+  "s-<up>" 'beginning-of-buffer
+  "s-<down>" 'end-of-buffer
 
   "s-<mouse-1>" 'evil-goto-definition
+
+  ;; mark
+
+  "s-m" 'helm-mark-ring
+  "s-M" 'helm-global-mark-ring
 
   ;; eval
 
@@ -652,8 +681,6 @@
   "M-s-≤" (ifn ()
                (save-buffer)
                (call-interactively 'eval-buffer)))
-
-
 
 (sp-with-modes sp--lisp-modes
   ;; disable ', it's the quote character!

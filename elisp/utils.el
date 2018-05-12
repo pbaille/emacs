@@ -3,17 +3,23 @@
   nil)
 
 (defmacro defk (k f)
+  (declare (indent defun))
   (list 'global-set-key (list 'kbd k) f))
 
+(defk "s-K" 'erase-messages)
+
 (defmacro defkm (m k f)
+  (declare (indent defun))
   (list 'define-key ,m (list 'kbd k) f))
 
 (defmacro defks (k f &rest kfs)
+  (declare (indent defun))
   (if kfs
       `(progn (defk ,k ,f) (defks ,@kfs))
     `(defk ,k ,f)))
 
 (defmacro defkms (m k f &rest kfs)
+  (declare (indent defun))
   (if kfs
       `(progn (defkm ,m ,k ,f) (defkms ,m ,@kfs))
     `(defkm ,m ,k ,f)))
@@ -29,9 +35,12 @@
   `(fn ,args (interactive) ,@xs))
 
 (defmacro idefun (name args &rest xs)
+  (declare (indent defun))
   `(defun ,name ,args (interactive) ,@xs))
 
-(defun call (f &rest args) (apply 'funcall f args))
+(defun call (f &rest args)
+  (declare (indent defun))
+  (apply 'funcall f args))
 
 (defmacro mexp (f) `(macroexpand ,f))
 

@@ -12,14 +12,27 @@
 
          (let* ((a 1) (b a)) (+ a b))
 
-         (flet ((yop (a) "yop"))
+         (cl-flet ((yop (a) "yop"))
            (yop 42))
+
+         ;; doesn't work
+         (cl-flet ((f1 () (print "a"))
+                   (f2 () (call f1) (print "b"))
+                   (f3 () (call f2) (print "c")))
+           (f3)
+           "d")
+
+         ;; have to do this
+         (let* ((f1 (fn () (print "a")))
+                (f2 (fn () (call f1) (print "b")))
+                (f3 (fn () (call f2) (print "c"))))
+           (call f3)
+           "d")
 
          (setq my-list '(0 1 2 3 4 5))
          (cl-letf (((car my-list) 1000)
                    ((elt my-list 3) 200))
            (message "%s" my-list)) ;; ==> "(1000 1 2 200 4 5)"
-
 
          (intern "aze")
          (symbol-name 'aze)
@@ -31,7 +44,6 @@
          (setq bar '(1 2)) ;⇒ (1 2)
          (setq x (vector 'foo bar)) ;⇒ [foo (1 2)]
          (setq y (copy-sequence x))
-         
 
          (elt [1 2 3 4] 2) ;nth
 
@@ -41,6 +53,20 @@
          (defvar azer 42)
          (fset 'azer (fn () (print "pouet")))
          (print azer (azer))
+
+
+         ;; error
+         (condition-case _
+             (forward-sexp)
+           (error :scan-error))
+
+         (macroexpand '(defmacro xp-add-m (a b) `(+ ',a ,@b)))
+         (defalias
+           (quote xp-add-m)
+           (cons (quote macro)
+                 (function
+                  (lambda (a b)
+                    (\` (+ (\, a) (\, b)))))))
          
          )
 
@@ -190,6 +216,14 @@
 
        (defun pb-id (&optional a &rest _) a)
 
+       (defun nv-re-split (re str)
+         (with-temp-buffer
+           (insert str)
+           (goto-char (point-min))
+           (re-search-forward re)
+           (list (buffer-substring (point-min) (point))
+                 (buffer-substring (point) (point-max)))))
+
        (defun pb-kw-name (x)
          (substring (symbol-name x) 1))
 
@@ -207,6 +241,12 @@
 
        (defmacro pb-cond (&rest xs)
          `(cond ,(-partition 2 (mapcar 'pb-ensure-list xs))))
+
+       (defmacro pb-flet (bindings &rest body)
+         (if-let ((b1 (car bindings)))
+             `(cl-flet (,b1)
+                (pb-flet ,(cdr bindings) ,@body))
+           `(progn ,@body)))
 
        (progn "tests"
               (pb-kw-name :sdf) ;-> "sdf"
@@ -303,7 +343,7 @@
 (defun nv-aend (s)
   (1+ (nv-end s)))
 (defun nv-str (s)
-  (buffer-substring (nv-beg s) (nv-end s)))
+  (buffer-substring-no-properties (nv-beg s) (nv-end s)))
 (defun nv-size (s)
   (- (nv-end s) (nv-beg s)))
 (defun nv-size= (s n)
@@ -331,6 +371,13 @@
 (defun nv-end+ (s n)
   (nv-sel (nv-beg s) (v (+ n (nv-end s)))))
 
+;; interactive
+(defmacro nv-silently-at (s &rest body)
+  `(save-excursion
+     (goto-char (nv-beg ,s))
+     ,@body
+     (nv-sel-at)))
+
 ;; predicates
 (defun nv-expr? (s)
   (and (member (nv-beg-char s) delimiters) s))
@@ -339,11 +386,11 @@
        s))
 (idefun nv-first? (s)
         (save-excursion
-          (goto-char (nv-beg s))
-          (when (sp-get-enclosing-sexp)
-            (sp-backward-up-sexp)
-            (sp-down-sexp)
-            (and (equal s (nv-sel-at)) s))))
+         (goto-char (nv-beg s))
+         (when (sp-get-enclosing-sexp)
+           (sp-backward-up-sexp)
+           (sp-down-sexp)
+           (and (equal s (nv-sel-at)) s))))
 (idefun nv-last? (s)
   (save-excursion
     (goto-char (nv-beg s))
@@ -375,6 +422,7 @@
 (idefun nv-out (s)
         (and (not (nv-top? s))
              (save-excursion
+               (goto-char (nv-beg s))
                (sp-backward-up-sexp)
                (nv-sel-at))))
 (idefun nv-in (s)
@@ -383,12 +431,6 @@
                (goto-char (nv-beg s))
                (sp-down-sexp)
                (nv-sel-at))))
-
-(defmacro pb-flet (bindings &rest body)
-  (if-let ((b1 (car bindings)))
-      `(cl-flet (,b1)
-         (pb-flet ,(cdr bindings) ,@body))
-    `(progn ,@body)))
 
 (pb-flet ((inc (x) (1+ x))
           (plus2 (x) (-> x inc inc)))
@@ -404,8 +446,9 @@
 
       ((cont (f xs)
              (fn (s)
-                 (call (seq-apply 'nv-mv xs)
-                       (call f s)))))
+                 (when s
+                   (call (seq-apply 'nv-mv xs)
+                         (call f s))))))
 
     (cond
 
@@ -422,10 +465,44 @@
      ((pb-kw? (car xs))
       (pcase (car xs)
 
+        (:when
+         (cont
+          (fn (s)
+              (when (call (nv-mv (cadr xs)) s)
+                (call (nv-mv (caddr xs)) s)))
+          (cdddr xs)))
+
+        (:if
+         (cont
+          (fn (s)
+              (if (call (nv-mv (cadr xs)) s)
+                  (call (nv-mv (caddr xs)) s)
+                (call (nv-mv (cadddr xs)) s)))
+          (cddddr xs)))
+
+        (:reduce
+         (cont
+          (fn (s)
+              (seq-reduce (fn (a e) ) (cadr xs)))
+          ()))
+
+        (:pr
+         (cont
+          (fn (s)
+              (princ
+               (concat
+                (symbol-name (cadr xs))
+                ": "
+                (nv-str s)
+                "\n"))
+              s)
+          (cddr xs)))
+
         (:opt
          (cont
           (fn (s)(or (call (nv-mv (cadr xs)) s) s))
           (cddr xs)))
+
         (:or
          (cont
           (fn (s)(or (call (nv-mv (cadr xs)) s)
@@ -440,7 +517,7 @@
         (:any
          (cont
           (fn (s)
-              (let ((mvs (seq-into (cadr xs) 'list)))
+              (when-let ((mvs (seq-into (cadr xs) 'list)))
                 (or (call (nv-mv (car mvs)) s)
                     (and (cdr mvs) (call (nv-mv :any (cdr mvs)) s)))))
           (cddr xs)))
@@ -459,15 +536,112 @@
      (:else
       (cont (car xs) (cdr xs))))))
 
+(comment
+ (defun nv-mv (&rest xs)
+
+   (cl-flet
+
+       ((cont (f xs)
+              (fn (s)
+                  (when s
+                    (call (seq-apply 'nv-mv xs)
+                      (call f s))))))
+
+     (cond
+
+      ((not xs) (fn (s) s))
+
+      ((vectorp (car xs))
+       (cont (cont 'pb-id (car xs))
+             (cdr xs)))
+
+      ((listp (car xs))
+       (cont (cont 'pb-id (car xs))
+             (cdr xs)))
+
+      ((pb-kw? (car xs))
+       (pcase (car xs)
+
+         (:when
+          (cont
+           (fn (s)
+               (when (call (nv-mv (cadr xs)) s)
+                 (call (nv-mv (caddr)) s)))
+           (cdddr xs)))
+
+         (:if
+          (cont
+           (fn (s)
+               (if (call (nv-mv (cadr xs)) s)
+                   (call (nv-mv (caddr xs)) s)
+                 (call (nv-mv (cadddr xs)) s)))
+           (cddddr xs)))
+
+         (:reduce
+          (cont
+           (fn (s)
+               (seq-reduce (fn (a e) ) (cadr xs)))
+           ()))
+
+         (:pr
+          (cont
+           (fn (s)
+               (princ
+                (concat
+                 (symbol-name (cadr xs))
+                 ": "
+                 (nv-str s)))
+               s)
+           (cddr xs)))
+
+         (:opt
+          (cont
+           (fn (s)(or (call (nv-mv (cadr xs)) s) s))
+           (cddr xs)))
+
+         (:or
+          (cont
+           (fn (s)(or (call (nv-mv (cadr xs)) s)
+                      (call (nv-mv (caddr xs)) s)))
+           (cdddr xs)))
+
+         (:all
+          (cont
+           (fn (s) (call (seq-apply 'nv-mv (cadr xs)) s))
+           (cddr xs)))
+
+         (:any
+          (cont
+           (fn (s)
+               (when-let ((mvs (seq-into (cadr xs) 'list)))
+                 (or (call (nv-mv (car mvs)) s)
+                     (and (cdr mvs) (call (nv-mv :any (cdr mvs)) s)))))
+           (cddr xs)))
+
+         (:deep
+          (cont
+           (fn (s)
+               (if-let ((mv (cadr xs))
+                        (nxt (call (nv-mv mv) s)))
+                   (call (nv-mv :deep mv) nxt)
+                 s))
+           (cddr xs)))
+
+         (_ (error "Unknown expression %S" (car xs)))))
+
+      (:else
+       (cont (car xs) (cdr xs)))))))
+
 (comment "tests"
+
          (call (nv-mv 'nv-next) (nv-sel-at))
          (call (nv-mv 'nv-next 'nv-next) (nv-sel-at))
          (call (nv-mv '(nv-next nv-prev)) (nv-sel-at))
          (call (nv-mv [nv-next nv-prev]) (nv-sel-at))
          (call (nv-mv :or 'nv-next 'nv-prev) (nv-sel-at))
          (call (nv-mv :all [nv-next nv-prev]) (nv-sel-at))
-         (call (nv-mv :any [nv-next nv-prev]) (nv-sel-at))
-         (call (nv-mv :deep 'nv-next) (nv-sel-at)))
+         (call (nv-mv :any [nv-next [:or nv-prev nv-out]]) (nv-sel-at))
+         (call (nv-mv :deep 'nv-out) (nv-sel-at)))
 
 ;; conveniance macro 
 (defmacro nv-defmv (name mvs)
@@ -480,18 +654,20 @@
 (nv-defmv nv-deep-out [:deep nv-out])
 (nv-defmv nv-deep-in [:deep nv-in])
 
-(defun nv-dbgmv (s) (dbg 'mv-dbg s) s)
+(comment (a (b c (a d)) (e f (g b)) e (((e) e) e) (e)) (a))
 
 ;; nav moves
-(nv-defmv nv-fw [:any [nv-next [nv-out nv-next :opt nv-in] (fn (s) (dbg 'dodu s) nil)]])
-(nv-defmv nv-bw [:or nv-prev [nv-out nv-bw :opt [nv-in nv-deep-next]]])
-(nv-defmv nv-ffw [:or nv-deep-next [nv-out nv-fw :opt nv-in]])
-(nv-defmv nv-fbw [:or nv-deep-prev [nv-out nv-bw :opt [nv-in nv-deep-next]]])
+(nv-defmv nv-fw
+          [[:pr fw]
+           :any [nv-next
+                 [nv-out nv-next [:pr optin :opt nv-in]]
+                 [[:pr lastcase] nv-out [:pr goout] nv-fw]]])
+(nv-defmv nv-bw [:pr bw :or nv-prev [nv-out nv-bw :opt [nv-in nv-deep-next]]])
+(nv-defmv nv-ffw [:pr ffw :or nv-deep-next [nv-out nv-fw :opt nv-in]])
+(nv-defmv nv-fbw [:pr fbw :or nv-deep-prev [nv-out nv-bw :opt [nv-in nv-deep-next]]])
 (nv-defmv nv-fwin [:or nv-in nv-fw])
 (nv-defmv nv-bwin [:any [[nv-bw nv-in nv-deep-next] [nv-bw nv-in] nv-bw]])
-(nv-defmv nv-fwout [nv-dbgmv :or [nv-out nv-fw] [nv-out nv-fwout]])
-
-(comment (a (b c d) (e f (g b)) e (((e) e) e) e))
+(nv-defmv nv-fwout [:if nv-top? nv-fw [:or [nv-out nv-fw] [nv-out nv-fwout]]])
 
 ;; state
 (defvar nv-state
@@ -500,6 +676,7 @@
 
 ;; side effetcts
 (idefun nv-mark! (s)
+        ;(dbg 'nv-mark s)
         (goto-char (nv-beg s))
         (set-mark (nv-end s)))
 (idefun nv-set! (v)
@@ -510,14 +687,24 @@
         (let ((s (or s (nv-sel-at))))
           (nv-set! (plput nv-state :current s))
           s))
+(idefun nv-goto-beg! ()
+  (goto-char (nv-beg (nv-current))))
+(idefun nv-goto-end! ()
+  (goto-char (nv-end (nv-current))))
 (idefun nv-upd-current! (f)
         (nv-current! (funcall f (nv-current))))
-(idefun nv-reverse! ()
-        (nv-set! (plupd nv-state :reverse 'not)))
+(idefun nv-reverse! (&optional b)
+  (nv-set!
+   (cond
+    ((or (not b) (= 0 b)) (plupd nv-state :reverse 'not))
+    ((> b 0) (plput nv-state :reverse t))
+    ((< b 0) (plput nv-state :reverse nil)))))
 (idefun nv-mark-current! (&optional s) 
         (nv-mark! (if s (nv-current! s) (nv-current)))
         (when (plget nv-state :reverse)
           (exchange-point-and-mark)))
+(idefun nv-mark-at-point! ()
+  (nv-mark-current! (nv-sel-at)))
 (idefun nv-splice-current! ()
         (let ((c (nv-current)))
           (nv-in c)
@@ -534,33 +721,20 @@
         (let ((c (nv-current)))
           (kill-ring-save (nv-beg c) (nv-end c))))
 (idefun nv-kill-current! ()
-        (let ((c (nv-current)))
-          (cond
-           ((nv-only? c) (sp-kill-sexp))
-           ((nv-last? c)
-            (sp-kill-sexp)
-            (save-excursion
-              (let ((p (point)))
-                (re-search-backward "[^ \n]")
-                (forward-char)
-                (delete-region p (point))))
-            (nv-mark-current! (nv-sel-at)))
-           ('else
-            (sp-kill-sexp)
-            (save-excursion
-              (let ((p (point)))
-                (re-search-forward "[^ \n]")
-                (backward-char)
-                (delete-region p (point))))
-            (nv-mark-current! (nv-sel-at))))))
+  (let ((c (nv-current)))
+    (goto-char (nv-beg (nv-current)))
+    (deactivate-mark)
+    (sp-kill-sexp)
+    (hungry-delete-forward)
+    (hungry-delete-backward)))
 (idefun nv-indent-current! ()
         (let* ((c (nv-current!))
                (c (if (nv-word? c) (nv-out c) c)))
           (indent-region (nv-beg c) (nv-end c))))
 (idefun nv-paste! ()
-        (nv-mark-current!)
         (call-interactively 'delete-region)
         (yank)
+        (exchange-point-and-mark)
         (nv-current!))
 (defun nv-fold-cycle! (arg)
   (interactive "p")
@@ -578,6 +752,48 @@
       (hs-show-block)
       (nv-mark-current! (plput (nv-sel-at) :fold-state :unfolded))))))
 
+(idefun nv-return-k ()
+  (setq hungry-delete-chars-to-skip " \t\f\v")
+  (nv-reverse! -1)
+  (goto-char (nv-beg (nv-current)))
+  (deactivate-mark)
+  (call-interactively 'hungry-delete-backward)
+  (insert "\n")
+  (indent-for-tab-command)
+  (nv-current!)
+  ;(nv-mark-current!)
+  )
+
+(idefun nv-parse-region ()
+  (print (parse-partial-sexp (point) (mark))))
+
+(idefun nv-backspace-k ()
+  (setq hungry-delete-chars-to-skip " \n\t\f\v")
+  (nv-reverse! -1)
+  (goto-char (nv-beg (nv-current)))
+  (deactivate-mark)
+  (call-interactively 'hungry-delete-backward)
+  (insert " ")
+  (nv-current!)
+  ;(nv-mark-current!)
+  )
+
+(idefun nv-space-k ()
+  (nv-reverse! -1)
+  (insert "… ")
+  (backward-char 2)
+  (nv-current!))
+
+(idefun nv-insert-fw ()
+  (nv-reverse! 1)
+  (nav-mode -1)
+  (insert " "))
+(idefun nv-insert-bw ()
+  (nv-reverse! -1)
+  (nav-mode -1)
+  (insert " ")
+  (backward-char))
+
 (progn "nav-mode"
 
   (defvar nav-mode-map (make-sparse-keymap))
@@ -586,34 +802,42 @@
     (defmks nav-mode-map x (ifn ()(nav-mode -1) (deactivate-mark)))
     (when xs (apply 'init-escape-keys xs)))
   (init-escape-keys
-   "<space>" 
    "<escape>" 
-   "<return>"
-   "<backspace>" 
-   "<left>" 
-   "<right>" 
    "<down>" 
    "<up>"
    )
 
   (defmks nav-mode-map
-    "i" (ifn () (nv-upd-current! 'nv-bw) (nv-mark-current!))
-    "o" (ifn () (nv-upd-current! 'nv-fw) (nv-mark-current!))
-    "u" (ifn () (nv-upd-current! 'nv-fbw) (nv-mark-current!)) 
-    "p" (ifn () (nv-upd-current! 'nv-ffw) (nv-mark-current!))
-    "j" (ifn () (nv-upd-current! 'nv-out) (nv-mark-current!))
-    "m" (ifn () (nv-upd-current! 'nv-fwout) (nv-mark-current!)) 
-    "k" (ifn () (nv-upd-current! 'nv-bwin) (nv-mark-current!))
-    "l" (ifn () (nv-upd-current! 'nv-fwin) (nv-mark-current!))
+
+    "i" (ifn () (nv-upd-current! 'nv-bw)  (nv-mark-current!))
+    "o" (ifn () (nv-upd-current! 'nv-fw)  (nv-mark-current!))
+    "u" (ifn () (nv-upd-current! 'nv-fbw)  (nv-mark-current!)) 
+    "p" (ifn () (nv-upd-current! 'nv-ffw)  (nv-mark-current!))
+    "j" (ifn () (nv-upd-current! 'nv-out)  (nv-mark-current!))
+    "m" (ifn () (nv-upd-current! 'nv-fwout)  (nv-mark-current!)) 
+    "k" (ifn () (nv-upd-current! 'nv-bwin)  (nv-mark-current!))
+    "l" (ifn () (nv-upd-current! 'nv-fwin)  (nv-mark-current!))
+
     "h" (ifn () (nv-reverse!) (nv-mark-current!))
+    "," (ifn () (dbg 's (nv-str (nv-sel-at))))
+
+    "SPC" 'nv-space-k
+    "<return>" 'nv-return-k
+    "<backspace>" 'nv-backspace-k
 
     "c" 'nv-copy-current!
     "w" 'nv-kill-current!
     "x" 'nv-kill-current!
-    "v" 'nv-paste!
+    "v" 'nv-paste! 
     "s" 'nv-splice-current!
     "q" 'nv-wrap-current!
     "<tab>" 'nv-fold-cycle!
+
+    "s-o" 'nv-insert-fw
+    "s-i" 'nv-insert-bw
+
+    "<left>" (ifn () (nv-reverse! -1) (nav-mode -1) (deactivate-mark))
+    "<right>"(ifn () (nv-reverse! 1) (nav-mode -1) (deactivate-mark)) 
 
     )
 
@@ -627,16 +851,50 @@
     :lighter " Nav"
     :keymap nav-mode-map
     :group 'nav)
-  (defks "s-j" (ifn () (nav-mode 1) (nv-current! (nv-sel-at)))))
+
+  (defks "s-j"
+    (ifn ()
+         (nav-mode 1)
+         (nv-current!)
+         (nv-mark-current!))))
 
 (comment
  (abc 1
-      3
       (+ 12
-         ert
+         (+ 12
+            ert
+            (iop df 3)
+            (z df 42)
+            o)
+         (iop df 3)
+         (z df 42)
+         o)
+      (+ 12
+         (+ 12
+            ert
+            (iop df 3)
+            (z df 42)
+            o)
          (iop df 3)
          (z df 42)
          o)
       (p oi l)))
 
+(comment
+ (defun nv-parse-sexp ()
+   (cond
+    ((symbol-at-point)
+     (let ((v (pl :type :symbol :at (point))))
+       (forward-symbol)
+       v))
+    ((sexp-at-point)
+     (let ((v (pl :type :list :at (point) :form (sexp-at-point)))
+           (children (sexp-at-point))))
+     (pl :type :list
+         :at (point)
+         :children
+         (progn (forward-char)
+                (mapcar (fn (_) (nv-parse-sexp)) children)))
+     )
+    )))
 
