@@ -49,7 +49,7 @@
 
 ;; helpers ----------------------------------------------------
 
-(progn
+(progn "help"
 
   (defun dbg (&rest xs)
     (print (list* xs)))
@@ -100,7 +100,7 @@
 
 ;; selections -------------------------------------------------
 
-(progn
+(progn "selections"
 
   (idefun sels-get ()
           (when (and mark-active
@@ -329,7 +329,8 @@
           (select-red-block)
           (comint-send-string
            "*red*"
-           (substr+ret (mark) (point))))
+           (substr+ret (mark) (point)))
+          (deactivate-mark))
 
   (idefun red-reload-file ()
     (save-buffer)
@@ -398,15 +399,79 @@
           (ifn ()
                (hs-minor-mode 1)
                (defmks shen-mode-map
-                 ;"M-h" 
+                 ;"M-h"
                  "M-z" 'switch-to-shen
                  "C-M-l" 'inferior-shen
                                         ;"C-r" 'red-relaunch
                  ";" (ifn () (insert "\\"))
                  "M-s-≤" (ifn () (save-buffer) (shen-load-file (buffer-name (current-buffer))))
-                 "M-<" (ifn () (sp-backward-up-sexp) (sp-mark-sexp) (shen-eval-region))
+                 "M-<" (ifn () (backward-up-list) (forward-sexp) (shen-eval-last-sexp))
                  "C-<" 'shen-eval-region
                  "s-<" 'shen-eval-defun)))
+
+;; clojure --------------------------------------------------
+
+(add-hook 'cider-mode-hook
+          (ifn ()
+               (hs-minor-mode 1)
+               (defmks cider-mode-map
+                                        ;"M-h"
+                 "M-z" 'cider-mode-switch-to-repl
+                 "C-M-l" 'cider-jack-in
+                                        ;"C-r" 'red-relaunch
+                 "M-s-≤" (ifn () (save-buffer) (cider-eval-buffer))
+                 "M-<" (ifn ()
+                            (save-excursion
+                              (backward-up-list)
+                              (set-mark (point))
+                              (forward-sexp)
+                              (cider-eval-region (mark) (point)))
+                            (deactivate-mark))
+                 "M-d" 'cider-doc
+                 "C-<" 'cider-eval-region
+                 "s-<" 'cider-eval-defun-at-point)))
+
+;; scheme ---------------------------------------------------
+
+(setq geiser-scheme-implementation '(chicken))
+(setq geiser-racket-binary "racket")
+
+(add-hook 'scheme-mode-hook
+          (ifn ()
+               (hs-minor-mode 1)
+               (defmks scheme-mode-map
+                                        ;"M-h"
+                 "M-z" 'geiser-mode-switch-to-repl
+                 "C-M-l" 'inferior-scheme
+                                        ;"C-r" 'red-relaunch
+                 "M-s-≤" (ifn () (save-buffer) (geiser-compile-current-buffer))
+                 "M-<" (ifn ()
+                            (save-excursion
+                              (backward-up-list)
+                              (set-mark (point))
+                              (forward-sexp)
+                              (geiser-eval-region (mark) (point)))
+                            (deactivate-mark))
+                 "M-d" 'geiser-doc-symbol-at-point
+                 "C-<" 'geiser-eval-region
+                 "s-<" 'geiser-eval-definition)))
+
+;; dired ----------------------------------------------------
+
+(add-hook 'dired-mode
+          (ifn ()
+               (defmks dired-mode-map
+                 "=" 'mhj/dwim-toggle-or-open
+                 "<left>"
+                 (ifn ()
+                      (let ((c (current-buffer)))
+                        (dired-up-directory)
+                        (kill-buffer c)))
+                 "<right>"
+                 (ifn ()
+                      (let ((c (current-buffer)))
+                        (dired-find-file)
+                        (kill-buffer c))))))
 
 ;; read only ------------------------------------------------
 
@@ -441,15 +506,31 @@
        (idefun se-beg? ())
        (idefun se-end? ())
 
+       (idefun pb-open-square ()
+         (insert "[]") (backward-char)
+         ;(save-excursion (backward-char) (backward-delete-char 1))
+         )
+
+       (idefun pb-open-curly ()
+         (paredit-open-curly)
+         ;(save-excursion (backward-char) (backward-delete-char 1))
+         )
+
+       (idefun pb-open-round ()
+         (paredit-open-round)
+         ;(save-excursion (backward-char) (backward-delete-char 1))
+         )
+
        (defun eval-current-sexp (x)
          (interactive "P")
+         (print "here")
          (save-excursion
            (goto-char (sp-get (sp-get-enclosing-sexp) :end))
-           (eval-last-sexp x)))
+           (eval-last-sexp x))
+         (deactivate-mark))
 
        (idefun kill-current-sexp ()
-               (interactive)
-               (sp-kill-sexp))
+         (backward-up-list) (sp-kill-sexp))
 
        (idefun wrap-current-sexp ()
                (interactive)
@@ -459,8 +540,7 @@
        (idefun copy-current-sexp ()
                (sp-backward-up-sexp)
                (sp-mark-sexp)
-               (ns-copy-including-secondary)
-               (throw "bob"))
+               (ns-copy-including-secondary))
 
        (idefun wrap-sel-or-sexp (open close)
                ;(dbg open close (sels-get))
@@ -489,6 +569,10 @@
                  (insert open)
                  (insert close)
                  (backward-char)))))
+
+;; search --------------------------------------------------
+
+(isearch-forward-symbol-at-point)
 
 ;; main edition overides  ----------------------------------
 
@@ -574,19 +658,21 @@
   "M-L" (ifn () (insert "|"))
   "M-/" (ifn () (insert "\\"))
   "M-n" (ifn () (insert "~"))
-
+  "$" (ifn () (paredit-open-square) (save-excursion (backward-char) (backward-delete-char)))
+  "*" 'paredit-open-curly
+  "\"" 'paredit-doublequote
   ;; delimiters
 
-  "(" 'paredit-open-round 
-  "s-(" 'paredit-open-square
-  "M-(" 'paredit-open-curly
+  "(" 'pb-open-round 
+  "s-(" 'pb-open-square
+  "M-(" 'pb-open-curly
 
   ;; windows
 
   "C-@" 'delete-window
   "C-&" 'toggle-maximize-window
-  "C-é" 'split-window-right
-  "C-\"" 'split-window-below
+  "C-é" 'split-window-right-and-focus
+  "C-\"" 'split-window-below-and-focus
   "C-<tab>" 'other-window
 
   ;; cursors
@@ -598,12 +684,12 @@
 
   ;; general
 
-
-
+  "s-D" 'dired-jump
   "s-h" 'pb-help
   "s-g" 'evil-goto-definition
   "s-l" 'helm-buffers-list
   "s-o" 'helm-find-files
+  "s-f" 'spacemacs/helm-buffers-smart-do-search-region-or-symbol
   "M-p" 'cycle-buffers
   "M-m ô" 'spacemacs/helm-project-smart-do-search
   "M-m M-$" 'spacemacs/helm-project-smart-do-search-region-or-symbol
@@ -614,6 +700,7 @@
 
   ;; edition
 
+  "M-v" 'helm-show-kill-ring
   "s-c" 'pb-copy
   "s-w" 'pb-kill
   "<escape>" 'pb-escape
@@ -621,15 +708,16 @@
   "s-<backspace>" 'hungry-delete-backward
   "s-S-<backspace>" 'hungry-delete-forward
 
-  "M-s-¬" 'nv-indent-current!
+  "M-s-¬" (ifn () (backward-up-list) (indent-sexp))
   "M-a" 'wrap-current-sexp
+  "M-w" 'kill-current-sexp
   "M-c" 'copy-current-sexp
   "M-s" 'sp-splice-sexp
 
   "C-M-S-<right>" 'sp-forward-slurp-sexp
-  "C-M-S-<left>" 'sp-backward-slurp-sexp
-  "C-M-S-<up>" 'sp-forward-barf-sexp
-  "C-M-S-<down>" 'sp-backward-barf-sexp
+  "C-M-S-<left>" 'sp-forward-barf-sexp
+  "C-M-S-<up>" 'sp-backward-barf-sexp
+  "C-M-S-<down>" 'sp-backward-slurp-sexp
 
   ;; toggling
 
@@ -638,9 +726,9 @@
 
   ;; selection
 
-  "s-d" 'se-expand-mark
+  "s-d" 'isearch-forward-symbol-at-point
 
-  ;; nav
+  ;; nav ----------------------------------------------
 
   "M-<up>" 'sp-up-sexp
   "M-<down>" 'sp-down-sexp
@@ -648,10 +736,10 @@
   "M-<left>" 'sp-backward-sexp
 
   ;; transient mark sp moves here
-  ;"M-S-<right>"  'sp-forward-slurp-sexp
-  ;"M-S-<left>" 'sp-backward-slurp-sexp
-  ;"M-S-<up>" 'sp-forward-barf-sexp
-  ;"M-S-<down>" 'sp-backward-barf-sexp
+                                        ;"M-S-<right>"  'sp-forward-slurp-sexp
+                                        ;"M-S-<left>" 'sp-backward-slurp-sexp
+                                        ;"M-S-<up>" 'sp-forward-barf-sexp
+                                        ;"M-S-<down>" 'sp-backward-barf-sexp
 
   "C-<up>" 'windmove-up
   "C-<down>" 'windmove-down
@@ -660,6 +748,8 @@
 
   "s-S-<right>" 'ns-next-frame
   "s-S-<left>" 'ns-prev-frame
+  "M-s-<left>" 'beginning-of-line-text 
+  "M-s-<right>" 'end-of-line
 
   "s-<right>" 'next-buffer
   "s-<left>" 'previous-buffer

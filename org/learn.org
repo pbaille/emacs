@@ -50,7 +50,7 @@ C-l : move around cursor center/down/up cycle
 
 M-l : downcase word
 M-u : uppercase word
-M-a : prev paragraph
+M-a : prev 
 M-u : nxt paragraph
 M-z : kill until char
 M-t : interchange adj words
@@ -62,7 +62,6 @@ M-j : indent new comment line
 
 to be continued.. for M-j k l...
 
-
 * bindings
 
 ** keymaps 
@@ -70,8 +69,25 @@ to be continued.. for M-j k l...
 (use-local-map (make-sparse-keymap))
 (local-set-key "\C-p" ctl-x-map)
      
-
 * Installation setup
 
 winum bindings can be commented at .emacs.d/layers/spacemacs/spacemacs-ui/packages.el
 
+* misc to remember/explore
+
+M-m j d : jump to dired 
+M-m j D : jump to dired other window
+
+spacemacs/helm-jump-in-buffer : show the structure of the project
+
+find-function-* : commands to jump to definition
+
+indent-region-or-buffer
+
+other-frame
+
+thing-at-point package
+ 
+C-h C-h is good for help
+
+abbrevs

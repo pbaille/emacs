@@ -1,0 +1,463 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Sat May 12 13:00:31 2018
+;; Desktop file format version 208
+;; Emacs version 25.3.1
+
+;; Global section:
+(setq desktop-saved-frameset [frameset 1 (23286 51535 227292 0) (desktop . "208") "pierrebaille@MacBook-Pro-de-Pierre.local" nil nil ((((font-backend mac-ct) (fontsize . 0) (font . "-*-Source Code Pro-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1") (border-width . 0) (internal-border-width . 2) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#989a9a") (background-color . "#292b2e") (line-spacing) (left-fringe . 0) (right-fringe . 0) (menu-bar-lines . 1) (tool-bar-lines . 0) (title) (icon-type) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (fullscreen . fullboth) (display-type . color) (background-mode . dark) (cursor-color . "SkyBlue2") (environment) (eyebrowse-last-slot . 1) (eyebrowse-current-slot . 1) (eyebrowse-window-configs (1 (((min-height . 8) (min-width . 20) (min-height-ignore . 6) (min-width-ignore . 4) (min-height-safe . 2) (min-width-safe . 4) (min-pixel-height . 136) (min-pixel-width . 160) (min-pixel-height-ignore . 102) (min-pixel-width-ignore . 32) (min-pixel-height-safe . 34) (min-pixel-width-safe . 32)) hc (pixel-width . 1672) (pixel-height . 1020) (total-width . 209) (total-height . 60) (normal-height . 1.0) (normal-width . 1.0) (combination-limit . t) (vc (pixel-width . 886) (pixel-height . 1020) (total-width . 111) (total-height . 60) (normal-height . 1.0) (normal-width . 0.5285972305839856) (combination-limit) (leaf (pixel-width . 886) (pixel-height . 686) (total-width . 111) (total-height . 40) (normal-height . 0.6669990029910269) (normal-width . 1.0) (buffer ".spacemacs" (selected . t) (hscroll . 0) (fringes 0 0 nil) (margins nil) (scroll-bars nil 0 t nil 0 nil) (vscroll . 0) (dedicated) (point . 16226) (start . 14968))) (leaf (last . t) (pixel-width . 886) (pixel-height . 334) (total-width . 111) (total-height . 20) (normal-height . 0.33300099700897323) (normal-width . 1.0) (buffer "*red*" (selected) (hscroll . 0) (fringes 0 0 nil) (margins nil) (scroll-bars nil 0 t nil 0 nil) (vscroll . 0) (dedicated) (point . 51649) (start . 51452)))) (vc (last . t) (pixel-width . 786) (pixel-height . 1020) (total-width . 98) (total-height . 60) (normal-height . 1.0) (normal-width . 0.4714027694160149) (combination-limit . t) (leaf (pixel-width . 786) (pixel-height . 510) (total-width . 98) (total-height . 30) (normal-height . 0.5) (normal-width . 1.0) (buffer "*Messages*" (selected) (hscroll . 0) (fringes 0 0 nil) (margins nil) (scroll-bars nil 0 t nil 0 nil) (vscroll . 0) (dedicated) (point . 120560) (start . 119513))) (leaf (last . t) (pixel-width . 786) (pixel-height . 510) (total-width . 98) (total-height . 30) (normal-height . 0.5) (normal-width . 1.0) (buffer "*Warnings*" (selected) (hscroll . 0) (fringes 0 0 nil) (margins nil) (scroll-bars nil 0 t nil 0 nil) (vscroll . 0) (dedicated) (point . 48) (start . 1))))) "")) (powerline-cache) (persp) (persp-buffer-predicate-old . spacemacs/useful-buffer-p) (persp-buffer-predicate-generated . "Unprintable entity") (frameset--id . "C493-943F-2D42-5CED") (frameset--mini t . t) (modeline . t) (minibuffer . t) (unsplittable) (right-divider-width . 0) (bottom-divider-width . 0) (icon-name) (display . "MacBook-Pro-de-Pierre.local") (explicit-name) (tool-bar-position . top) (zoomed . 2) (visibility . t) (fullscreen-restore) (height . 61) (width . 209) (left . 2) (top . 5)) ((min-height . 8) (min-width . 20) (min-height-ignore . 6) (min-width-ignore . 4) (min-height-safe . 2) (min-width-safe . 4) (min-pixel-height . 136) (min-pixel-width . 160) (min-pixel-height-ignore . 102) (min-pixel-width-ignore . 32) (min-pixel-height-safe . 34) (min-pixel-width-safe . 32)) hc (pixel-width . 1672) (pixel-height . 1020) (total-width . 209) (total-height . 60) (normal-height . 1.0) (normal-width . 1.0) (combination-limit . t) (vc (pixel-width . 886) (pixel-height . 1020) (total-width . 111) (total-height . 60) (normal-height . 1.0) (normal-width . 0.5285972305839856) (combination-limit) (leaf (pixel-width . 886) (pixel-height . 686) (total-width . 111) (total-height . 40) (normal-height . 0.6669990029910269) (normal-width . 1.0) (buffer ".spacemacs" (selected . t) (hscroll . 0) (fringes 0 0 nil) (margins nil) (scroll-bars nil 0 t nil 0 nil) (vscroll . 0) (dedicated) (point . 16226) (start . 14968))) (leaf (last . t) (pixel-width . 886) (pixel-height . 334) (total-width . 111) (total-height . 20) (normal-height . 0.33300099700897323) (normal-width . 1.0) (buffer "*red*" (selected) (hscroll . 0) (fringes 0 0 nil) (margins nil) (scroll-bars nil 0 t nil 0 nil) (vscroll . 0) (dedicated) (point . 51649) (start . 51452)))) (vc (last . t) (pixel-width . 786) (pixel-height . 1020) (total-width . 98) (total-height . 60) (normal-height . 1.0) (normal-width . 0.4714027694160149) (combination-limit . t) (leaf (pixel-width . 786) (pixel-height . 510) (total-width . 98) (total-height . 30) (normal-height . 0.5) (normal-width . 1.0) (buffer "*Messages*" (selected) (hscroll . 0) (fringes 0 0 nil) (margins nil) (scroll-bars nil 0 t nil 0 nil) (vscroll . 0) (dedicated) (point . 120810) (start . 119684))) (leaf (last . t) (pixel-width . 786) (pixel-height . 510) (total-width . 98) (total-height . 30) (normal-height . 0.5) (normal-width . 1.0) (buffer "*Warnings*" (selected) (hscroll . 0) (fringes 0 0 nil) (margins nil) (scroll-bars nil 0 t nil 0 nil) (vscroll . 0) (dedicated) (point . 48) (start . 1))))))])
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '("cycle" "C-S" "mode-map" "-map " "mode" "search" "the" "substr" "expand" "expand-region" "expa" "tab" "mode-map" "paredt-mode-map" "light"))
+(setq regexp-search-ring '("\\_<thing-at-point--read-from-whole-string\\_>" "\\_<form-at-point\\_>" "\\_<toggle-maximize-window\\_>" "\\_<remove-lisp-comment\\_>" "\\_<sp-get\\_>" "\\_<paredit-current-parse-state\\_>" "\\_<paredit-string-start\\+end-points\\_>" "\\_<paredit-enclosing-string-start\\_>"))
+(setq register-alist '((48 . "sp-get") (_ "Unprintable entity")))
+(setq file-name-history '("~/Code/Emacs/elisp/tree.el" "~/Code/Emacs/org/learn.org" "~/Code/Emacs/elisp/learn.el" "~/Code/Emacs/elisp/utils.el" "~/Code/Emacs/.gitignore" "~/Code/Red/redu/metaparse.red" "~/Code/Red/redu/walk.red" "~/Code/Red/learn-red/gitter-snippets.red" "~/Code/Red/forks/red-tools/func-tools.red" "~/Code/Red/redu/README.md" "~/Code/Red/redu/okasaki/core.red" "~/Code/Red/redu/utils.red" "~/Code/Red/lsys.red" "~/Code/Red/learn-red/parse.red" "~/Code/Red/redu/arity.red" "~/Code/Red/redu/pfn.red" "~/Code/Scala/learn2/src/main/scala/example/lab/nav.scala" "~/Code/Scala/learn2/src/main/scala/example/lab/fpscala.scala" "~/Code/Haskell/s2/src/Geometry.hs" "~/Code/Haskell/s2/src/Geometry/Cube.hs" "~/Code/Haskell/s2/src/Combiner.hs" "~/Code/Haskell/s2/src/Sandbox.hs" "~/Code/Haskell/s2/src/Lib.hs" "~/Code/Haskell/stackone/src/two.hs" "~/Code/Haskell/stackone/src/Lib.hs" "~/Code/Haskell/one/two.hs" "~/Code/Haskell/one/one.hs" "~/Code/Idris/tuts/one.idr" "~/Code/Shen/shen-walkthrough/README.md" "~/Code/Shen/shen-walkthrough/.gitignore" "~/Code/Shen/tut/one.shen" "~/Code/Shen/bos/4/core.shen" "~/Code/Shen/bos/3/core.shen" "~/Code/Shen/bos/2/core.shen" "~/Code/Shen/bos/2/bible.shen" "~/Code/Red/redu/lambda.red" "~/Code/Emacs/elisp/scala.el" "~/Code/Emacs/elisp/org.el" "~/.spacemacs" "~/.emacs.d/init.el" "~/Code/Red/exp/utils.red" "~/Code/Emacs/.spacemacs" "~/Code/Emacs/elisp/main.el" "~/Code/Emacs/paredit-bindings.el" "~/Code/Emacs/scratch.el" "~/Code/Emacs/elisp.el" "~/Code/Emacs/scratch 2.el" "~/Code/Red/utils.red" "~/Code/Red/arity.red" "~/Code/Red/arity-of.red" "~/Code/Red/pfn.red" "~/Code/Red/exp2/README.md" "~/Code/Red/exp/README.md" "~/Code/Red/exp/LICENSE" "~/Code/Emacs/red-mode/red-mode.el" "~/Code/Emacs/tree.el" "~/Code/Red/red-pure-fun/README.md" "~/Code/Red/gitter-snippets.red" "~/Code/Emacs/main.el" "~/Code/Red/maps.red" "~/Code/Red/red-tools/func-tools.red" "~/Code/Red/code/Showcase/ellipse.red" "~/Code/Red/code/Showcase/calculator.red" "~/Code/Red/code/Showcase/eve-clock.red" "~/Code/Red/code/Showcase/last-commits.red" "~/Code/Red/code/Showcase/livecode.red" "~/Code/Red/code/Showcase/tile-game.red" "~/Code/Red/code/Showcase/picosheet.red" "~/Code/Red/parse.r" "~/Code/Red/fp.red" "~/Code/Red/a.txt" "~/Code/Red/datatypes.red" "~/Code/Red/b.red" "~/Code/Emacs/theme.el" "~/Code/Emacs/scala.el" "~/Code/Emacs/gotham-theme.el" "~/Code/REBOL/red/b.red" "~/Code/REBOL/first.reb" "~/Code/Emacs/learn.org" "~/.emacs.d/elpa/winum-20171028.702/winum.el" "~/Code/.DS_Store"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 208
+  "/Users/pierrebaille/.spacemacs"
+  ".spacemacs"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  16226
+  '(16226 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (16200 2366 2145 2160 1721 16265 16144 16087 16070 16026 16229 15968 16011 1 16072 16072))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Emacs/elisp/tree.el"
+  "tree.el"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  956
+  '(956 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring (956 522 521 1 312 631 696 727 441 435 439 649 746 886))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/redu/metaparse.red"
+  "metaparse.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  3847
+  '(3847 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (3847 2555 5049 3653 4119 4517 4085 3894 4250 3752 5299 5297 3652 4166 4691 4120))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/learn-red/maps.red"
+  "maps.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  431
+  '(420 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (419 416 395 361 370 371 443 442 432 1 466 359))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Emacs/elisp/main.el"
+  "main.el"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode hungry-delete-mode)
+  9811
+  '(9811 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (17267 17624 16898 17428 17391 17353 17313 17317 17312 17312 17315 17300 17296 17024 16864 17261))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Emacs/elisp/learn.el"
+  "learn.el"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  22765
+  '(22765 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (22765 1526 23108 1 151 1498))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/learn-red/parse.red"
+  "parse.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  7172
+  '(7031 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . utf-8-emacs-unix))
+  '((mark-ring (7192 7067 7153 7159 7135 7159 7095 7159 7097 7031 7031 7031 7031 7031 7031 7031))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Emacs/org/learn.org"
+  "learn.org"
+  'org-mode
+  '(page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hl-todo-mode projectile-mode evil-org-mode)
+  1580
+  '(1580 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (buffer-file-coding-system . undecided-unix) (truncate-lines . t))
+  '((mark-ring (1580 242 1567 1568 1543 1566 1493 1))))
+
+(desktop-create-buffer 208
+  nil
+  "elisp"
+  'dired-mode
+  '(global-auto-revert-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode volatile-highlights-mode helm-mode projectile-mode)
+  680
+  '(1 nil)
+  t
+  '("/Users/pierrebaille/Code/Emacs/elisp/")
+  '((indicate-empty-lines))
+  '((mark-ring (1))))
+
+(desktop-create-buffer 208
+  "/Applications/Emacs.app/Contents/Resources/lisp/isearch.el.gz"
+  "isearch.el.gz"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  129903
+  '(18736 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring (18947 56873 38079 34600 17803 17661 129925))))
+
+(desktop-create-buffer 208
+  "/Applications/Emacs.app/Contents/Resources/lisp/thingatpt.el.gz"
+  "thingatpt.el.gz"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  22322
+  '(21418 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring (21974 22203 2086 4694 22252 22589 22597 22734 22363))))
+
+(desktop-create-buffer 208
+  "/Applications/Emacs.app/Contents/Resources/lisp/emacs-lisp/lisp.el.gz"
+  "lisp.el.gz"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  6970
+  '(8238 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring (3549 8882 8239 6995))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Emacs/elisp/utils.el"
+  "utils.el"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  1284
+  '(1284 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring (1284 204 904 806 466 331 230 106 82 59 1 1041 631 994 991 988))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/.emacs.d/elpa/evil-20180307.109/evil-commands.el"
+  "evil-commands.el"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  97070
+  '(97070 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (97070))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/.emacs.d/layers/+spacemacs/spacemacs-editing/packages.el"
+  "packages.el"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  5481
+  '(nil nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (1 5535 5504))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/.emacs.d/elpa/hungry-delete-20170411.1802/hungry-delete.el"
+  "hungry-delete.el"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  2228
+  '(2228 t)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring (2228 2220 2242 2245 2245 2244))))
+
+(desktop-create-buffer 208
+  nil
+  "Emacs"
+  'dired-mode
+  '(global-auto-revert-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode volatile-highlights-mode helm-mode projectile-mode dired-omit-mode)
+  420
+  '(1 nil)
+  t
+  '("/Users/pierrebaille/Code/Emacs/")
+  '((indicate-empty-lines))
+  '((mark-ring (1 1 1))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/redu/arity.red"
+  "arity.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  2642
+  '(2642 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (2642 2667 1))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Emacs/elisp/theme.el"
+  "theme.el"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  1
+  '(1 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/Applications/Emacs.app/Contents/Resources/lisp/indent.el.gz"
+  "indent.el.gz"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  18892
+  '(nil nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/Applications/Emacs.app/Contents/Resources/lisp/emacs-lisp/seq.el.gz"
+  "seq.el.gz"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  75
+  '(1 t)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (1 2345 13939 7475 9019 75 2329 309))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Emacs/elisp/idris-bindings.el"
+  "idris-bindings.el"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  303
+  '(303 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring (303 1))))
+
+(desktop-create-buffer 208
+  "/Applications/Emacs.app/Contents/Resources/lisp/progmodes/hideshow.el.gz"
+  "hideshow.el.gz"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  32080
+  '(32080 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (32080 36457 33982 36327 30978 29522 29814 29522 30284 30286 30602 30658 31517 36445))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Emacs/.gitignore"
+  ".gitignore"
+  'fundamental-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode projectile-mode)
+  13
+  '(13 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (13 1))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/.emacs.d/elpa/smartparens-20180308.1042/smartparens.el"
+  "smartparens.el"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  263741
+  '(263741 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (263741 155460 157066 150400))))
+
+(desktop-create-buffer 208
+  "/Applications/Emacs.app/Contents/Resources/lisp/term.el.gz"
+  "term.el.gz"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  85074
+  '(85074 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring (85074 36111 48325 34361))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/.emacs.d/init.el"
+  "init.el"
+  'emacs-lisp-mode
+  '(eldoc-mode page-break-lines-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode elisp-slime-nav-mode auto-compile-mode projectile-mode)
+  1410
+  '(1410 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring (1410 1400 1480 1 1460))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/redu/utils.red"
+  "utils.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  6091
+  '(6091 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (1632 1929 1974 1976 4485 4345 3660 4343 4303 812 4292 1089 4427 4484 4426 4346))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/redu/pfn.red"
+  "pfn.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  781
+  '(781 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (781 419 448 112 35 92 779 780 418 507 672))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/redu/README.md"
+  "README.md"
+  'markdown-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hl-todo-mode auto-highlight-symbol-mode projectile-mode orgtbl-mode mmm-mode)
+  357
+  '(357 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (357 1))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/forks/red-tools/func-tools.red"
+  "func-tools.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  3698
+  '(3698 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (3698 3963 1))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/learn-red/gitter-snippets.red"
+  "gitter-snippets.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  1198
+  '(1198 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . utf-8-emacs-unix))
+  '((mark-ring (1198 1 1361))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/redu/okasaki/core.red"
+  "core.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  157
+  '(157 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (157 99 60 158 63 55 8 27 1 29 22 8 54))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/lsys.red"
+  "lsys.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  3877
+  '(3877 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (3877 1))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/learn-red/mars.red"
+  "mars.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  1
+  '(2166 t)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (377 2166 2069 1186 2070 1743 1448 1337 1336 1319 1311 1311 49 10 10 72))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Shen/shen-walkthrough/1-3.shen"
+  "1-3.shen"
+  'shen-mode
+  '(eldoc-mode global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode smartparens-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode rainbow-delimiters-mode hs-minor-mode hl-todo-mode highlight-parentheses-mode highlight-numbers-mode auto-highlight-symbol-mode bug-reference-prog-mode goto-address-prog-mode projectile-mode)
+  1346
+  '(3731 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . 1) (indicate-empty-lines . t) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (703 663 3729 1 702 655 662 680 702 702 650 587 499 520 442 1346))))
+
+(desktop-create-buffer 208
+  "/Users/pierrebaille/Code/Red/redu/lambda.red"
+  "lambda.red"
+  'red-mode
+  '(global-auto-revert-mode undo-tree-mode override-global-mode which-key-mode holy-mode anzu-mode evil-escape-mode flx-ido-mode persp-mode vi-tilde-fringe-mode volatile-highlights-mode helm-mode hs-minor-mode projectile-mode)
+  1159
+  '(1159 nil)
+  nil
+  nil
+  '((indicate-empty-lines . t) (tab-width . 4) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (1159 1 523))))
+

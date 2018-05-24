@@ -1,0 +1,31 @@
+QWERTY layout description
+
+normal:
+
+± ! @ # $ % ^ & * ( ) _ +
+§ 1 2 3 4 5 6 7 8 9 0 - =
+
+
+q w e r t y u i o p [ ]
+Q W E R T Y U I O P { }
+
+a s d f g h j k l ; ' \
+A S D F G H J K L : " |
+
+` z x c v b n m , . /
+~ Z X C V B N M < > ?
+
+alt:
+
+§ ¡ ™ £ ¢ ∞ § ¶ • ª º – ≠
+± ⁄ € ‹ › ﬁ ﬂ ‡ ° · ‚ — ±
+
+œ ∑ ´ ® † ¥ ¨ ˆ ø π “
+„ ´ ‰ ˇ Á ¨ ˆ Ø ∏ ” ’
+
+å ß ∂ ƒ © ˙ ∆ ˚ ¬ … æ «
+Å Í Î Ï ˝ Ó Ô  Ò Ú Æ »
+
+` Ω ≈ ç √ ∫ ˜ µ ≤ ≥ ÷
+` ¸ ˛ Ç ◊ ı ˜ Â ¯ ˘ ¿
+

@@ -14,6 +14,8 @@
     (setq dired-subtree-line-prefix (lambda (depth) (make-string (* 2 depth) ?\s)))
     (setq dired-subtree-use-backgrounds nil)))
 
+
+
 (defun mhj/dwim-toggle-or-open ()
   "Toggle subtree or open the file."
   (interactive)
