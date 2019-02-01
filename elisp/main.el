@@ -7,49 +7,68 @@
 ;; should kill this dep
 (require 'paredit)
 
-;; init --------------------------------------------------------
+(progn "init" 
 
-(progn
+       ;; completion
+       (setq tab-always-indent 'complete)
+       (setq-default truncate-lines t)
+       (add-to-list 'completion-styles 'initials t)
 
-  "init"
+       ;; smooth scroll
+       (setq mouse-wheel-scroll-amount '(3 ((shift) . 3) ((control) . nil)))
+       (setq mouse-wheel-progressive-speed nil)
 
-  ;; completion
-  (setq tab-always-indent 'complete)
-  (add-to-list 'completion-styles 'initials t)
+       ;; mark relative
+       (setq use-empty-active-region t)
+       (setq mark-even-if-inactive t)
+       (setq transient-mark-mode t)
 
-  ;; smooth scroll
-  (setq mouse-wheel-scroll-amount '(3 ((shift) . 3) ((control) . nil)))
-  (setq mouse-wheel-progressive-speed nil)
+       ;; bypass confirmation on kill buffer
+       (setq kill-buffer-query-functions
+             (delq 'process-kill-buffer-query-function
+                   kill-buffer-query-functions))
 
-  ;; mark relative
-  (setq use-empty-active-region t)
-  (setq mark-even-if-inactive t)
-  (setq transient-mark-mode t)
+       ;; style
+       (set-face-attribute 'default (selected-frame) :height 130)
+                                        ;(set-fringe-style 'no-fringes)
+       ;; (setq neo-theme 'arrow)
 
-  ;; bypass confirmation on kill buffer
-  (setq kill-buffer-query-functions
-        (delq 'process-kill-buffer-query-function
-              kill-buffer-query-functions))
+       (setq helm-split-window-inside-p t)
 
-  ;; style
-  (set-face-attribute 'default (selected-frame) :height 130)
-  ;(set-fringe-style 'no-fringes)
-  (setq neo-theme 'arrow)
+       ;; for the minibuffer not to extend
+       (setq resize-mini-windows nil)
 
-  ;; for the minibuffer not to extend
-  (setq resize-mini-windows nil)
+       (global-company-mode 1)
 
+       (comment
+        (use-package org-bullets
+          :ensure t
+          :init
+          (setq org-bullets-bullet-list
+                '("□" "□" "□" "□" "□" "□"
+                                        ;"◉" "◎" "○"  "◇"
+                  ))
+          :config
+          (add-hook 'org-mode-hook (lambda () (org-indent-mode 1) (org-bullets-mode 1)))))
+
+       (require 'ob-clojure)
+       (require 'cider)
+       (setq org-babel-clojure-backend 'cider)
+       (org-babel-do-load-languages
+        'org-babel-load-languages
+        '((clojure . t)
+          (emacs-lisp . t)
+          ))
+  
+       )
+
+(progn "constants" 
+  (defvar opening-delimiters '("(" "[" "{"))
+  (defvar closing-delimiters '(")" "]" "}"))
+  (defvar delimiters (apply 'append opening-delimiters closing-delimiters))
   )
 
-;; constants --------------------------------------------------
-
-(defvar opening-delimiters '("(" "[" "{"))
-(defvar closing-delimiters '(")" "]" "}"))
-(defvar delimiters (apply 'append opening-delimiters closing-delimiters))
-
-;; helpers ----------------------------------------------------
-
-(progn "help"
+(progn "help" 
 
   (defun dbg (&rest xs)
     (print (list* xs)))
@@ -98,9 +117,7 @@
               compact-string
               (concat "\r"))))
 
-;; selections -------------------------------------------------
-
-(progn "selections"
+(progn "selections" 
 
   (idefun sels-get ()
           (when (and mark-active
@@ -161,343 +178,541 @@
             (se-expand-max)))
   )
 
-;; point ------------------------------------------------------
+(progn "point"
 
-(idefun current-char ()
+  (idefun current-char ()
 
-  (buffer-substring
-   (point)
-   (min (point-max) (1+ (point)))))
+    (buffer-substring
+     (point)
+     (min (point-max) (1+ (point)))))
 
-(idefun get-prev-char ()
-        (buffer-substring
-         (max (point-min) (1- (point)))
-         (point)))
+  (idefun get-prev-char ()
+    (buffer-substring
+     (max (point-min) (1- (point)))
+     (point)))
 
-(idefun get-next-char ()
-        (buffer-substring
-         (min (point-max) (1+ (point)))
-         (min (point-max) (2 + (point)))))
+  (idefun get-next-char ()
+    (buffer-substring
+     (min (point-max) (1+ (point)))
+     (min (point-max) (2 + (point)))))
 
-(idefun current-char? (c)
-  (equal (current-char) c))
+  (idefun current-char? (c)
+    (equal (current-char) c))
 
-(progn "point position" 
+  (progn "point position" 
 
-  (idefun point-on-opening-delimiter? ()
-          (member (current-char) opening-delimiters))
+         (idefun point-on-opening-delimiter? ()
+           (member (current-char) opening-delimiters))
 
-  (idefun point-after-opening-delimiter?  ()
-          (member (get-prev-char) opening-delimiters))
+         (idefun point-after-opening-delimiter?  ()
+           (member (get-prev-char) opening-delimiters))
 
-  (idefun point-before-opening-delimiter?  ()
-          (member (get-next-char) opening-delimiters))
+         (idefun point-before-opening-delimiter?  ()
+           (member (get-next-char) opening-delimiters))
 
-  (idefun point-on-closing-delimiter? ()
-          (member (current-char) closing-delimiters))
+         (idefun point-on-closing-delimiter? ()
+           (member (current-char) closing-delimiters))
 
-  (idefun point-after-closing-delimiter?  ()
-          (member (get-prev-char) closing-delimiters))
+         (idefun point-after-closing-delimiter?  ()
+           (member (get-prev-char) closing-delimiters))
 
-  (idefun point-before-closing-delimiter?  ()
-          (member (get-next-char) closing-delimiters))
+         (idefun point-before-closing-delimiter?  ()
+           (member (get-next-char) closing-delimiters))
 
-  (idefun point-on-delimiter? ()
-          (or (point-on-opening-delimiter?)
-              (point-on-closing-delimiter?)
-              (equal "\"" (current-char))))
+         (idefun point-on-delimiter? ()
+           (or (point-on-opening-delimiter?)
+               (point-on-closing-delimiter?)
+               (equal "\"" (current-char))))
 
-  (idefun point-on-space? ()
-          (equal " " (current-char)))
+         (idefun point-on-space? ()
+           (equal " " (current-char)))
 
-  (idefun point-on-newline? ()
-          (equal "\n" (current-char)))
+         (idefun point-on-newline? ()
+           (equal "\n" (current-char)))
 
-  (idefun point-on-first-char-of-line? ()
-          (save-excursion
-            (backward-char)
-            (cond
-             ((point-on-newline?) t)
-             ((point-on-space?) (point-on-first-char-of-line?)))))
+         (idefun point-on-first-char-of-line? ()
+           (save-excursion
+             (backward-char)
+             (cond
+              ((point-on-newline?) t)
+              ((point-on-space?) (point-on-first-char-of-line?)))))
 
-  (idefun point-on-last-char-of-line? ()
-          (save-excursion
-            (forward-char)
-            (point-on-newline?)))
+         (idefun point-on-last-char-of-line? ()
+           (save-excursion
+             (forward-char)
+             (point-on-newline?)))
 
-  (idefun point-on-space-or-newline? ()
-          (or (point-on-space?)
-              (point-on-newline?)))
+         (idefun point-on-space-or-newline? ()
+           (or (point-on-space?)
+               (point-on-newline?)))
 
-  (comment
-   (idefun word-beginning? ()
-           (when (and (not (delimiter?))
-                      (not (space-or-newline?)))
-             (let ((current (point))
-                   (case-fold-search t))
-               (save-excursion
-                 (skip-chars-backward "\-a-zA-Z0-9")
-                 (equal current (point)))))))
+         (comment
+          (idefun word-beginning? ()
+            (when (and (not (delimiter?))
+                       (not (space-or-newline?)))
+              (let ((current (point))
+                    (case-fold-search t))
+                (save-excursion
+                  (skip-chars-backward "\-a-zA-Z0-9")
+                  (equal current (point)))))))
 
-  (idefun point-on-symbol? ()
-          (and (not (point-on-space-or-newline?))
-               (not (point-on-delimiter?))))
+         (idefun point-on-symbol? ()
+           (and (not (point-on-space-or-newline?))
+                (not (point-on-delimiter?))))
 
-  (idefun point-on-beginning-of-symbol? ()
-          (and (point-on-symbol?)
-               (save-excursion
-                 (backward-char)
-                 (or (point-on-space-or-newline?)
-                     (point-on-delimiter?)))))
+         (idefun point-on-beginning-of-symbol? ()
+           (and (point-on-symbol?)
+                (save-excursion
+                  (backward-char)
+                  (or (point-on-space-or-newline?)
+                      (point-on-delimiter?)))))
 
-  )
+         )
 
-(progn "scan" 
+  (progn "scan" 
 
-  (defun get-next-char (&optional ignore-blanks)
-    (save-excursion
-      (forward-char)
-      (if ignore-blanks
-          (or (and (point-on-space-or-newline?)
-                   (get-next-char ignore-blanks))
-              (current-char))
-        (current-char))))
+         (defun get-next-char (&optional ignore-blanks)
+           (save-excursion
+             (forward-char)
+             (if ignore-blanks
+                 (or (and (point-on-space-or-newline?)
+                          (get-next-char ignore-blanks))
+                     (current-char))
+               (current-char))))
 
-  (defun get-prev-char (&optional ignore-blanks)
-    (save-excursion
-      (backward-char)
-      (if ignore-blanks
-          (or (and (point-on-space-or-newline?)
-                   (get-prev-char ignore-blanks))
-              (current-char))
-        (current-char))))
+         (defun get-prev-char (&optional ignore-blanks)
+           (save-excursion
+             (backward-char)
+             (if ignore-blanks
+                 (or (and (point-on-space-or-newline?)
+                          (get-prev-char ignore-blanks))
+                     (current-char))
+               (current-char))))
 
-  (defun next-char-is (x &optional ignore-blanks)
-    (equal x (get-next-char ignore-blanks)))
+         (defun next-char-is (x &optional ignore-blanks)
+           (equal x (get-next-char ignore-blanks)))
 
-  (defun prev-char-is (x &optional ignore-blanks)
-    (equal x (get-prev-char ignore-blanks))))
+         (defun prev-char-is (x &optional ignore-blanks)
+           (equal x (get-prev-char ignore-blanks)))))
 
-;; nav mode --------------------------------------------------
+(progn "nav mode"
 
+  (idefun send-sel (b)
+    (comint-send-string b (substr+ret (mark) (point))))
 
-
-;; sending ---------------------------------------------------
-
-(idefun send-sel (b)
-        (comint-send-string b (substr+ret (mark) (point))))
-
-(idefun send-line (b)
-  (comint-send-string
-   b
-   (substr+ret
-    (line-beginning-position 1)
-    (line-beginning-position 2))))
-
-;; term -----------------------------------------------------
-
-(idefun term-launch (&optional name)
-        (ansi-term "/bin/zsh" name))
-
-(idefun term-reset (name)
-  (let ((cb (current-buffer))
-        (tbn (concat "*" name "*")))
-    (select-window (get-buffer-window tbn))
-    (kill-process)
-    (kill-buffer tbn)
-    (term-launch name)
-    (select-window (get-buffer-window cb))))
-
-(idefun term-paste ()
-  (term-line-mode)
-  (ns-paste-secondary)
-  (term-char-mode))
-
-(idefun term-init-local-keys ()
-        (local-set-key (kbd "M-z") 'previous-multiframe-window)
-        (local-set-key (kbd "s-v") 'term-paste))
-
-;; red ------------------------------------------------------
-
-(progn "red" 
-
-  (idefun select-red-block ()
-          (se-expand-max)
-          (expand-region-to-enclosing-empty-lines))
-
-  (idefun red-eval-top-lvl-block ()
-          (select-red-block)
-          (comint-send-string
-           "*red*"
-           (substr+ret (mark) (point)))
-          (deactivate-mark))
-
-  (idefun red-reload-file ()
-    (save-buffer)
+  (idefun send-line (b)
     (comint-send-string
-     "*red*"
-     (concat "do load %" (buffer-name) "\r")))
+     b
+     (substr+ret
+      (line-beginning-position 1)
+      (line-beginning-position 2)))))
 
-  (idefun red-launch ()
-    (let (cb (current-buffer))
-      (when (not (get-buffer "*red*"))
-        (split-window-below)
-        (windmove-down)
-        (term-launch "red")
-        (term-init-local-keys)
-        (windmove-up)
-        (comint-send-string "*red*" "red\r"))))
+(progn "term"
 
-  (defvar red-current-buffer nil)
+  (idefun term-launch (&optional name)
+    (ansi-term "/bin/zsh" name))
 
-  (idefun red-repl-toggle-focus ()
-    (if (equal "*red*" (buffer-name (current-buffer)))
-        (if (not red-current-buffer)
-            (other-window -1)
-          (select-window (get-buffer-window red-current-buffer)))
-      (progn
-        (setq red-current-buffer (current-buffer))
-        (select-window (get-buffer-window "*red*")))))
+  (idefun term-launch-at-project-root ()
+    (find-file (or (find-proot) (find-projectile-root)))
+    (let ((cb (current-buffer)))
+      (term-launch)
+      (kill-buffer cb)))
 
-  (idefun red-relaunch ()
-    (term-reset "red")
-    (sit-for 1)
-    (comint-send-string "*red*" "red\r")
-    (red-repl-toggle-focus)
-    (term-init-local-keys)
-    (red-repl-toggle-focus))
+  (idefun term-reset (name)
+    (let ((cb (current-buffer))
+          (tbn (concat "*" name "*")))
+      (select-window (get-buffer-window tbn))
+      (kill-process)
+      (kill-buffer tbn)
+      (term-launch name)
+      (select-window (get-buffer-window cb))))
 
-  (idefun red-print-doc ()
-    (forward-sexp)
-    (backward-sexp)
-    (mark-sexp)
-    (comint-send-string "*red*" (concat "? " (sels-get) "\r")))
+  (idefun term-paste ()
+    (term-line-mode)
+    (ns-paste-secondary)
+    (term-char-mode))
 
-  (add-hook 'red-mode-hook
-            (ifn ()
-                 (print "red-refreshed!")
-                 (hs-minor-mode 1)
-                 (defmks red-mode-map
+  (idefun term-init-local-keys ()
+    (local-set-key (kbd "M-z") 'previous-multiframe-window)
+    (local-set-key (kbd "s-v") 'term-paste)))
+
+(progn "languages"
+
+       (progn "red"
+
+              (idefun select-red-block ()
+                (se-expand-max)
+                (expand-region-to-enclosing-empty-lines))
+
+              (idefun red-eval-top-lvl-block ()
+                (select-red-block)
+                (comint-send-string
+                 "*red*"
+                 (substr+ret (mark) (point)))
+                (deactivate-mark))
+
+              (idefun red-reload-file ()
+                (save-buffer)
+                (comint-send-string
+                 "*red*"
+                 (concat "do load %" (buffer-name) "\r")))
+
+              (idefun red-launch ()
+                (let (cb (current-buffer))
+                  (when (not (get-buffer "*red*"))
+                    (split-window-below)
+                    (windmove-down)
+                    (term-launch "red")
+                    (term-init-local-keys)
+                    (windmove-up)
+                    (comint-send-string "*red*" "red\r"))))
+
+              (defvar red-current-buffer nil)
+
+              (idefun red-repl-toggle-focus ()
+                (if (equal "*red*" (buffer-name (current-buffer)))
+                    (if (not red-current-buffer)
+                        (other-window -1)
+                      (select-window (get-buffer-window red-current-buffer)))
+                  (progn
+                    (setq red-current-buffer (current-buffer))
+                    (select-window (get-buffer-window "*red*")))))
+
+              (idefun red-relaunch ()
+                (term-reset "red")
+                (sit-for 1)
+                (comint-send-string "*red*" "red\r")
+                (red-repl-toggle-focus)
+                (term-init-local-keys)
+                (red-repl-toggle-focus))
+
+              (idefun red-print-doc ()
+                (forward-sexp)
+                (backward-sexp)
+                (mark-sexp)
+                (comint-send-string "*red*" (concat "? " (sels-get) "\r")))
+
+              (add-hook 'red-mode-hook
+                        (ifn ()
+                             (print "red-refreshed!")
+                             (hs-minor-mode 1)
+                             (defmks red-mode-map
                                         ;""
-                   "M-f" (ifn () (insert "func[][\n\n]") (backward-char 5))
-                   "M-h" 'red-print-doc
-                   "M-z" 'red-repl-toggle-focus
-                   "C-M-l" 'red-launch
-                   "C-r" 'red-relaunch
-                   "M-r" 'red-reload-file
-                   "M-<" (ifn () (send-line "*red*"))
-                   "C-<" (ifn () (send-sel "*red*"))
-                   "s-<" 'red-eval-top-lvl-block
-                   "M-s-≤" 'red-reload-file)))
+                               "M-f" (ifn () (insert "func[][\n\n]") (backward-char 5))
+                               "M-h" 'red-print-doc
+                               "M-z" 'red-repl-toggle-focus
+                               "C-M-l" 'red-launch
+                               "C-r" 'red-relaunch
+                               "M-r" 'red-reload-file
+                               "M-<" (ifn () (send-line "*red*"))
+                               "C-<" (ifn () (send-sel "*red*"))
+                               "s-<" 'red-eval-top-lvl-block
+                               "M-s-≤" 'red-reload-file)))
 
-  ;(run-hooks 'red-mode-hook)
-  )
+                                        ;(run-hooks 'red-mode-hook)
+              )
 
-;; shen -----------------------------------------------------
-
-(add-hook 'shen-mode-hook
-          (ifn ()
-               (hs-minor-mode 1)
-               (defmks shen-mode-map
-                 ;"M-h"
-                 "M-z" 'switch-to-shen
-                 "C-M-l" 'inferior-shen
-                                        ;"C-r" 'red-relaunch
-                 ";" (ifn () (insert "\\"))
-                 "M-s-≤" (ifn () (save-buffer) (shen-load-file (buffer-name (current-buffer))))
-                 "M-<" (ifn () (backward-up-list) (forward-sexp) (shen-eval-last-sexp))
-                 "C-<" 'shen-eval-region
-                 "s-<" 'shen-eval-defun)))
-
-;; clojure --------------------------------------------------
-
-(add-hook 'cider-mode-hook
-          (ifn ()
-               (hs-minor-mode 1)
-               (defmks cider-mode-map
+       (progn "shen"
+         (add-hook 'shen-mode-hook
+                  (ifn ()
+                       (hs-minor-mode 1)
+                       (defmks shen-mode-map
                                         ;"M-h"
-                 "M-z" 'cider-mode-switch-to-repl
-                 "C-M-l" 'cider-jack-in
+                         "M-z" 'switch-to-shen
+                         "C-M-l" 'inferior-shen
                                         ;"C-r" 'red-relaunch
-                 "M-s-≤" (ifn () (save-buffer) (cider-eval-buffer))
-                 "M-<" (ifn ()
-                            (save-excursion
-                              (backward-up-list)
-                              (set-mark (point))
-                              (forward-sexp)
-                              (cider-eval-region (mark) (point)))
-                            (deactivate-mark))
-                 "M-d" 'cider-doc
-                 "C-<" 'cider-eval-region
-                 "s-<" 'cider-eval-defun-at-point)))
+                         ";" (ifn () (insert "\\"))
+                         "M-s-≤" (ifn () (save-buffer) (shen-load-file (buffer-name (current-buffer))))
+                         "M-<" (ifn () (backward-up-list) (forward-sexp) (shen-eval-last-sexp))
+                         "C-<" 'shen-eval-region
+                         "s-<" 'shen-eval-defun))))
 
-;; scheme ---------------------------------------------------
-
-(setq geiser-scheme-implementation '(chicken))
-(setq geiser-racket-binary "racket")
-
-(add-hook 'scheme-mode-hook
-          (ifn ()
-               (hs-minor-mode 1)
-               (defmks scheme-mode-map
+       (progn "io"
+              (add-hook 'io-mode-hook
+                  (ifn ()
+                       (hs-minor-mode 1)
+                       (defmks io-mode-map
                                         ;"M-h"
-                 "M-z" 'geiser-mode-switch-to-repl
-                 "C-M-l" 'inferior-scheme
+                         "M-z" 'io-switch-to-interpreter
+                         "C-M-l" 'io-run-io
                                         ;"C-r" 'red-relaunch
-                 "M-s-≤" (ifn () (save-buffer) (geiser-compile-current-buffer))
-                 "M-<" (ifn ()
-                            (save-excursion
-                              (backward-up-list)
-                              (set-mark (point))
-                              (forward-sexp)
-                              (geiser-eval-region (mark) (point)))
-                            (deactivate-mark))
-                 "M-d" 'geiser-doc-symbol-at-point
-                 "C-<" 'geiser-eval-region
-                 "s-<" 'geiser-eval-definition)))
+                         "M-s-≤" (ifn () (save-buffer) (io-eval-buffer))
+                                        ;"M-<" (ifn () (backward-up-list) (forward-sexp) (shen-eval-last-sexp))
+                         "C-<" 'io-eval-region
+                         "s-<" (ifn ()
+                                    (select-red-block)
+                                    (io-eval-region (sels-start) (sels-start)))))))
 
-;; dired ----------------------------------------------------
+       (progn "clojure"
 
-(add-hook 'dired-mode
-          (ifn ()
-               (defmks dired-mode-map
-                 "=" 'mhj/dwim-toggle-or-open
-                 "<left>"
-                 (ifn ()
-                      (let ((c (current-buffer)))
-                        (dired-up-directory)
-                        (kill-buffer c)))
-                 "<right>"
-                 (ifn ()
-                      (let ((c (current-buffer)))
-                        (dired-find-file)
-                        (kill-buffer c))))))
+              (setq cider-auto-select-error-buffer nil)
+              (setq cider-show-error-buffer nil)
+              (setq cider-repl-use-pretty-printing t)
+              (setq cider-ns-refresh-show-log-buffer t)
+              (setq cider-ns-save-files-on-refresh t)
+              (setq cider-ns-save-files-on-refresh-modes t)
+              (setq cider-cljs-lein-repl
+                    "(do (require 'figwheel-sidecar.repl-api)
+                         (figwheel-sidecar.repl-api/start-figwheel!)
+                         (figwheel-sidecar.repl-api/cljs-repl))")
 
-;; read only ------------------------------------------------
+              (progn "wrapped evaluation, for custom repls..."
+                (idefun cider-repl-expansion-middleware (s)
+                  (concat "(! " s ")"))
 
-(idefun erase-read-only-buffer (b)
-        (let ((cw (get-buffer-window (current-buffer))))
-          (select-window (get-buffer-window b))
-          (read-only-mode -1)
-          (erase-buffer)
-          (read-only-mode 1)
-          (select-window cw)))
+                (idefun cider-wrapped-eval (evalfn mw)
+                  (funcall evalfn
+                           (funcall mw (buffer-substring-no-properties
+                                        (sp-get (sp-get-enclosing-sexp) :beg)
+                                        (sp-get (sp-get-enclosing-sexp) :end)))))
 
-(idefun erase-messages ()
-        (erase-read-only-buffer "*Messages*"))
+                (setq cider-expanded-evaluation nil)
+                (idefun cider-expanded-eval ()
+                  (cider-wrapped-eval
+                   'cider-interactive-eval
+                   (if cider-expanded-evaluation
+                       'cider-repl-expansion-middleware
+                     (fn (a) a)))))
 
-;; marked state ---------------------------------------------
+              (idefun cider-send-current-sexp ()
+                (save-excursion
+                  (goto-char (sp-get (sp-get-enclosing-sexp) :end))
+                  (spacemacs/cider-send-last-sexp-to-repl)))
 
-(idefun restore-arrow-bindings ()
-  (defks
-    "<left>" 'left-char
-    "<right>" 'right-char
-    "<up>" 'previous-line
-    "<down>" 'next-line)) 
+              (idefun cider-send-buffer ()
+                (save-buffer)
+                (spacemacs/cider-send-buffer-in-repl-and-focus)
+                (cider-switch-to-last-clojure-buffer))
 
-;; sexp -----------------------------------------------------
+              (add-hook 'clojure-mode
+                        (fn ()
+                            (defmks clojure-mode-map
+                              "C-M-j" 'cider-jack-in-clj
+                              "C-M-S-j" 'cider-jack-in-cljs
+                              "C-M-s-j" 'cider-jack-in-clj&cljs
+                               )))
 
-(progn "sexps"
+              (add-hook 'cider-mode-hook
+                        (fn ()
+                            (cider-company-enable-fuzzy-completion)
+                            (hs-minor-mode 1)
+                            (defmks cider-mode-map
+                              "TAB" 'company-complete
+                              "M-d" 'cider-doc
+                              "C-M-s-r" 'cider-restart
+                              "C-M-l" 'cider-ns-refresh
+                              "C-M-s-l" 'cider-ns-reload-all
+                              "M-s-≤" 'cider-send-buffer
+                              "M-<" 'cider-send-current-sexp
+                              "C-<" 'spacemacs/cider-send-region-to-repl
+                              "s-<" 'spacemacs/cider-send-function-to-repl
+                              "s-r" 'cider-switch-to-repl-buffer
+                              "C-M-i" 'spacemacs/cider-send-ns-form-to-repl
+                              ))))
+
+       (add-hook 'cider-repl-mode-hook
+                 (fn ()
+                     (cider-company-enable-fuzzy-completion)
+                     (defmks cider-repl-mode-map
+                       "s-K" 'cider-repl-clear-buffer
+                       "s-r" 'cider-switch-to-last-clojure-buffer)))
+
+       (progn "scheme"
+
+         (setq geiser-scheme-implementation '(chicken))
+         (setq geiser-racket-binary "racket")
+
+         (add-hook 'scheme-mode-hook
+                   (ifn ()
+                        (hs-minor-mode 1)
+                        (defmks scheme-mode-map
+                                        ;"M-h"
+                          "M-z" 'geiser-mode-switch-to-repl
+                          "C-M-l" 'inferior-scheme
+                                        ;"C-r" 'red-relaunch
+                          "M-s-≤" (ifn () (save-buffer) (geiser-compile-current-buffer))
+                          "M-<" (ifn ()
+                                     (save-excursion
+                                       (backward-up-list)
+                                       (set-mark (point))
+                                       (forward-sexp)
+                                       (geiser-eval-region (mark) (point)))
+                                     (deactivate-mark))
+                          "M-d" 'geiser-doc-symbol-at-point
+                          "C-<" 'geiser-eval-region
+                          "s-<" 'geiser-eval-definition))))
+
+       (progn "prolog"
+              (add-hook 'prolog-mode-hook
+                        (ifn ()
+                             (defmks prolog-mode-map
+                               "M-<" 'ediprolog-dwim
+                               "(" (ifn () (insert "()") (backward-char))))))
+
+       (progn "purescript"
+
+         (require 'psc-ide)
+
+         (add-hook 'purescript-mode-hook
+                   'turn-on-purescript-indentation)
+
+         (add-hook 'purescript-mode-hook
+                   'psc-ide-mode)
+
+         (add-hook 'purescript-mode-hook
+                   'company-mode)
+
+         (add-hook 'purescript-mode-hook
+                   'flycheck-mode))
+
+       (progn "org"
+
+              (setq org-support-shift-select t)
+
+              (setq org-babel-confirm-evaluate nil)
+
+              (comment
+               (add-hook org-mode-hook
+                         (ifn ()
+                              (defmks org-mode-map
+                                "M-<" 'org-ctrl-c-ctrl-c
+                                "M-t" 'org-insert-structure-template
+                                "M-l" 'org-insert-link-global))))
+              )
+       )
+
+(progn "proot"
+
+       (idefun find-projectile-root ()
+         (find-file-from (buffer-file-name (current-buffer))
+                         ".projectile"))
+
+       (defun find-file-from (from filename)
+         (let* ((segments (split-string from "/"))
+                (path (butlast segments))
+                (parent-paths (seq-starts path)))
+           (car
+            (seq-keep (fn (p)
+                          (let ((loc (string-join (append p (list filename)) "/")))
+                            (and (file-exists-p loc) loc)))
+                      parent-paths))))
+
+       (idefun find-proot ()
+         (find-file-from (buffer-file-name (current-buffer))
+                         ".proot"))
+
+       (idefun proot-open ()
+         (dired-jump nil (find-proot))))
+
+(progn "dired" 
+
+  (require 'dired)
+
+  (progn "extension"
+
+         (idefun dired-go ()
+           (let ((c (current-buffer)))
+             (if (not (dired-utils-is-dir-p))
+                 (dired-find-file)
+               (progn
+                 (print (dired-get-file-for-visit))
+                 (dired-find-file)
+                 (kill-buffer c)))))
+
+         (idefun dired-toggle-or-go ()
+           (if (file-directory-p (dired-get-file-for-visit))
+               (progn
+                 (dired-subtree-toggle)
+                 (revert-buffer))
+             (dired-go)))
+
+         (idefun dired-open-term ()
+           (let ((dired-buffer (current-buffer)))
+             (dired-find-file)
+             (let ((c (current-buffer)))
+               (term-launch)
+               (kill-buffer dired-buffer)
+               (kill-buffer c))))
+
+         (idefun dired-create ()
+           (let* ((val (read-from-minibuffer "mkdir: "))
+                 (splitted (path/split-filename val)))
+             (shell-command (concat "mkdir -p " (dired-get-file-for-visit) "/" (car splitted)))
+             (when-let ((filename (cdr splitted)))
+               (shell-command (concat "touch " (dired-get-file-for-visit) "/" val)))))
+
+         
+
+         (idefun dired-back ()
+           (let ((c (current-buffer)))
+             (or
+              (dired-subtree-up)
+              (progn (dired-up-directory)
+                     (kill-buffer c)))))
+
+         (idefun dired-open ()
+           (dired-jump nil (buffer-file-name (current-buffer))))
+
+         (defmks dired-mode-map
+           "<escape>" (ifn () (kill-buffer))
+           "<return>" 'dired-go
+           "<backspace>" 'dired-close
+           "<left>" 'dired-back
+           "<right>" 'dired-toggle-or-go
+           "t" 'dired-open-term
+           "n" 'dired-create))
+
+  (progn "sdired"
+
+    (idefun sdired-go ()
+      (when (not (dired-utils-is-dir-p))
+        (let ((f (dired-get-file-for-visit)))
+          (windmove-right)
+          (set-window-buffer
+           (get-buffer-window (current-buffer))
+           (find-file f)))))
+
+    (idefun sdired-toggle-or-go ()
+      (if (file-directory-p (dired-get-file-for-visit))
+          (progn
+            (dired-subtree-toggle)
+            (revert-buffer))
+        (sdired-go)))
+
+    (idefun sdired-open ()
+      (let* ((sidebar-buffer (current-buffer))
+             (sidebar-window (get-buffer-window sidebar-buffer)))
+        (split-window-right-and-focus)
+        (let* ((target-buffer (current-buffer))
+               (target-window (get-buffer-window target-buffer)))
+          (windmove-left)
+          (dired-jump nil (find-proot))
+          (comment
+           (dired-jump nil (buffer-file-name target-buffer)))
+          (sdired-mode 1)
+          (evil-window-set-width 25))))
+
+    (idefun sdired-close ()
+      (kill-buffer)
+      (delete-window))
+
+    (setq sdired-mode-map (make-sparse-keymap))
+
+    (defmks sdired-mode-map
+      "<escape>" 'sdired-close
+      "<return>" 'sdired-go
+      "<backspace>" 'sdired-close
+      "<left>" 'dired-back
+      "<right>" 'sdired-toggle-or-go)
+
+    (define-minor-mode sdired-mode
+      "Toggle Sidebar Dired minor mode"
+      nil
+      " SDired"
+      sdired-mode-map
+      :group 'sidebars)))
+
+(progn "sexp"
 
        ;; TODO for better nav
        (idefun se-first? ())
@@ -523,7 +738,6 @@
 
        (defun eval-current-sexp (x)
          (interactive "P")
-         (print "here")
          (save-excursion
            (goto-char (sp-get (sp-get-enclosing-sexp) :end))
            (eval-last-sexp x))
@@ -570,87 +784,116 @@
                  (insert close)
                  (backward-char)))))
 
-;; search --------------------------------------------------
+(progn "pb-cmds"
 
-(isearch-forward-symbol-at-point)
+  (idefun pb-copy ()
+    (when (not (sels-get))
+      (goto-char (end-of-line))
+      (set-mark (beginning-of-line)))
+    (kill-ring-save (mark) (point)))
 
-;; main edition overides  ----------------------------------
+  (idefun pb-kill ()
+    (cond
+     ((sels-get) (kill-region (mark) (point)))
+     ((empty-line) (kill-line))
+     ('else (sp-kill-sexp))))
 
-(idefun pb-copy ()
-        (when (not (sels-get))
-          (goto-char (end-of-line))
-          (set-mark (beginning-of-line)))
-        (kill-ring-save (mark) (point)))
+  (idefun pb-escape ()
+    (cond
+     (buffer-read-only (kill-buffer))
+     ((not (sels-empty?)) (set-mark nil))
+     ((sels-empty?) (mc/keyboard-quit))
+     ('else (mc/keyboard-quit))))
 
-(idefun pb-kill ()
-        (cond
-         ((sels-get) (kill-region (mark) (point)))
-         ((empty-line) (kill-line))
-         ('else (sp-kill-sexp))))
-
-(idefun pb-escape ()
-        (cond
-         (buffer-read-only (kill-buffer))
-         ((not (sels-empty?)) (set-mark nil))
-         ((sels-empty?) (mc/keyboard-quit))
-         ('else (mc/keyboard-quit))))
-
-(idefun pb-backspace ()
+  (idefun pb-backspace ()
         
-        (cond
-         ((sels-get)
-          (sp-kill-region (mark) (point)))
-         ('else
-          (paredit-backward-delete))
+    (cond
+     ((sels-get)
+      (sp-kill-region (mark) (point)))
+     ('else
+      (paredit-backward-delete))
 
-         ((point-after-opening-delimiter?)
-          (backward-char)
-          (sp-kill-sexp))
-         ((point-before-closing-delimiter?)
-          (backward-char))
-         ('else (sp-backward-delete-char))))
+     ((point-after-opening-delimiter?)
+      (backward-char)
+      (sp-kill-sexp))
+     ((point-before-closing-delimiter?)
+      (backward-char))
+     ('else (sp-backward-delete-char))))
 
-(idefun pb-help ()
-        (if-let ((s (sels-get)))
-            (describe-function (intern s))
-          (call-interactively 'describe-function)))
+  (idefun pb-help ()
+    (if-let ((s (sels-get)))
+        (describe-function (intern s))
+      (call-interactively 'describe-function))))
 
-;; misc -----------------------------------------------------
+(progn "misc"
 
-(idefun toggle-maximize-window () 
-       (if (= 1 (length (window-list)))
-           (jump-to-register '_)
-         (progn
-           (set-register '_ (list (current-window-configuration)))
-           (delete-other-windows))))
+  (idefun erase-read-only-buffer (b)
+    (let ((cw (get-buffer-window (current-buffer))))
+      (select-window (get-buffer-window b))
+      (read-only-mode -1)
+      (erase-buffer)
+      (read-only-mode 1)
+      (select-window cw)))
 
-(idefun toggle-helm ()
-        (if  (equal " *Minibuf-1*"  (buffer-name (current-buffer)))
-            (helm-keyboard-quit)
-          (call-interactively 'helm-M-x)))
+  (idefun erase-messages ()
+    (erase-read-only-buffer "*Messages*"))
 
-(progn "cycle buffer"
+  (idefun toggle-maximize-window ()
+    (if (= 1 (length (window-list)))
+        (jump-to-register '_)
+      (progn
+        (set-register '_ (list (current-window-configuration)))
+        (delete-other-windows))))
 
-       (defvar cycle-buffers-state t)
+  (idefun toggle-helm ()
+    (if  (equal " *Minibuf-1*"  (buffer-name (current-buffer)))
+        (helm-keyboard-quit)
+      (call-interactively 'helm-M-x)))
 
-       (idefun cycle-buffers ()
-               (interactive)
-               (setq cycle-buffers-state
-                     (not cycle-buffers-state))
-               (if cycle-buffers-state
-                   (previous-buffer)
-                 (next-buffer))))
+  (progn "cycle buffer"
 
-(defadvice kill-line (after kill-line-cleanup-whitespace activate compile)
-  "cleanup whitespace on kill-line"
-  (if (not (bolp))
-      (delete-region (point) (progn (skip-chars-forward " \t") (point)))))
+         (defvar cycle-buffers-state t)
+
+         (idefun cycle-buffers ()
+           (interactive)
+           (setq cycle-buffers-state
+                 (not cycle-buffers-state))
+           (if cycle-buffers-state
+               (previous-buffer)
+             (next-buffer))))
+
+  (defadvice kill-line (after kill-line-cleanup-whitespace activate compile)
+    "cleanup whitespace on kill-line"
+    (if (not (bolp))
+        (delete-region (point) (progn (skip-chars-forward " \t") (point))))))
+
+(progn "smart-parens"
+
+       (add-to-list 'sp--lisp-modes 'red-mode)
+
+       (sp-with-modes sp--lisp-modes
+         ;; disable ', it's the quote character!
+         (sp-local-pair "'" nil :actions nil)
+         ;; also only use the pseudo-quote inside strings where it serve as
+         ;; hyperlink.
+         (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p))
+         (sp-local-pair "`" nil
+                        :skip-match (lambda (ms mb me)
+                                      (cond
+                                       ((equal ms "'")
+                                        (or (sp--org-skip-markup ms mb me)
+                                            (not (sp-point-in-string-or-comment))))
+                                       (t (not (sp-point-in-string-or-comment))))))))
 
 ;; bindings ------------------------------------------------
 
-(add-to-list 'sp--lisp-modes 'red-mode)
-
 (defks
+
+  ;; modes
+  "<f12>" 'spacemacs/toggle-hybrid-mode
+  "<f11>" 'spacemacs/toggle-holy-mode
+
+  "TAB" 'company-indent-or-complete-common
 
   ;; chars
   
@@ -658,8 +901,8 @@
   "M-L" (ifn () (insert "|"))
   "M-/" (ifn () (insert "\\"))
   "M-n" (ifn () (insert "~"))
-  "$" (ifn () (paredit-open-square) (save-excursion (backward-char) (backward-delete-char)))
-  "*" 'paredit-open-curly
+  ;"$" (ifn () (paredit-open-square) (save-excursion (backward-char) (backward-delete-char)))
+  ;"*" 'paredit-open-curly
   "\"" 'paredit-doublequote
   ;; delimiters
 
@@ -674,6 +917,7 @@
   "C-é" 'split-window-right-and-focus
   "C-\"" 'split-window-below-and-focus
   "C-<tab>" 'other-window
+  "s-'" 'other-frame
 
   ;; cursors
 
@@ -684,25 +928,29 @@
 
   ;; general
 
-  "s-D" 'dired-jump
+  "C-M-g" 'magit
+  "s-d" 'proot-open
+  "s-D" 'sdired-open
   "s-h" 'pb-help
   "s-g" 'evil-goto-definition
-  "s-l" 'helm-buffers-list
+  "s-l" 'helm-mini
   "s-o" 'helm-find-files
   "s-f" 'spacemacs/helm-buffers-smart-do-search-region-or-symbol
   "M-p" 'cycle-buffers
   "M-m ô" 'spacemacs/helm-project-smart-do-search
   "M-m M-$" 'spacemacs/helm-project-smart-do-search-region-or-symbol
-  "s-:" 'neotree-toggle
+  ; "s-:" 'neotree-toggle
   "s-;" 'toggle-helm
   "s-s" 'save-buffer
   "s-t" 'term-launch
+  "s-T" 'term-launch-at-project-root
 
   ;; edition
 
   "M-v" 'helm-show-kill-ring
   "s-c" 'pb-copy
-  "s-w" 'pb-kill
+  "s-x" 'pb-kill
+  "s-w" 'er/expand-region
   "<escape>" 'pb-escape
   "<backspace>" 'pb-backspace
   "s-<backspace>" 'hungry-delete-backward
@@ -710,7 +958,7 @@
 
   "M-s-¬" (ifn () (backward-up-list) (indent-sexp))
   "M-a" 'wrap-current-sexp
-  "M-w" 'kill-current-sexp
+  "M-x" 'kill-current-sexp
   "M-c" 'copy-current-sexp
   "M-s" 'sp-splice-sexp
 
@@ -722,11 +970,12 @@
   ;; toggling
 
   "C-M-<tab>" 'hs-hide-all
+  "M-s-<tab>" 'hs-hide-level
   "M-<tab>" 'evil-toggle-fold
 
   ;; selection
 
-  "s-d" 'isearch-forward-symbol-at-point
+  ;"s-d" 'isearch-forward-symbol-at-point
 
   ;; nav ----------------------------------------------
 
@@ -756,7 +1005,7 @@
   "s-<up>" 'beginning-of-buffer
   "s-<down>" 'end-of-buffer
 
-  "s-<mouse-1>" 'evil-goto-definition
+  "s-<mouse-1>" 'spacemacs/jump-to-definition
 
   ;; mark
 
@@ -772,20 +1021,6 @@
                (save-buffer)
                (call-interactively 'eval-buffer)))
 
-(sp-with-modes sp--lisp-modes
-  ;; disable ', it's the quote character!
-  (sp-local-pair "'" nil :actions nil)
-  ;; also only use the pseudo-quote inside strings where it serve as
-  ;; hyperlink.
-  (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p))
-  (sp-local-pair "`" nil
-                 :skip-match (lambda (ms mb me)
-                               (cond
-                                ((equal ms "'")
-                                 (or (sp--org-skip-markup ms mb me)
-                                     (not (sp-point-in-string-or-comment))))
-                                (t (not (sp-point-in-string-or-comment)))))))
-
 ;; TODO ----------------------------------------------------
 
 ;; inserting [] and curly is clumpsy
@@ -794,3 +1029,10 @@
 ;; kill should work backward not forward
 ;; code folding should be pulti lvl and easy (double click unfolding should be nice)
 ;; exit marked state is clumsy too... it jumps sometimes
+
+
+
+(load-file "~/Code/Emacs/elisp/treemacs.el")
+(load-file "~/Code/Emacs/elisp/treemacs-doom.el")
+
+

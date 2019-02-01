@@ -6,12 +6,15 @@
 * Links 
 
 ** blabla
+
   :PROPERTIES:
   :CUSTOM_ID:       blabla
   :END:
+
 popo
 
 <<target>>
+
 ** aze
 aze
 
@@ -24,20 +27,52 @@ aze
 
 [[qsd]]
 
+
+* Images 
+
+insert a file link pointing to an image
+
+*** inline in a specific buffer
+#+STARTUP: inlineimages
+
+*** inline globally
+(setq org-startup-with-inline-images t)
+
+*** trigger display
+org-display-inline-images  
+org-redisplay-inline-images
+
+** exemple 
+
+[[file:~/Pictures/misc/monol.png]]
+
+
+*** resizing
+
+TODO not working
+
+in initialization:
+(setq org-image-actual-width nil)
+
+#+attr_html: :width 100px
+#+attr_latex: :width 100px
+#+ATTR_ORG: :width 100
+[[~/Pictures/misc/monolythe3.png]]
+
 * Moving things
 
 M-direction is amazing
 
 * Tags                                                            :tag1:tag2:
 
-** Adding a tag                                                        :test:
+** Adding a tag                                                       :test:
 
    M-Ret : ou C-c C-c on a heading
    C-c C-q in a section
 
 ** inheritance                                                      :aze:ert:
 
-   this heding has tags: tag1 tag2 aze ert
+   this heading has tags: tag1 tag2 aze ert
 
 ** global tags 
 
@@ -50,6 +85,7 @@ M-direction is amazing
 
 *** test                                                            :aze:zer:
     doesn't seem to work
+
 
 ** Advanced 
 
@@ -66,6 +102,10 @@ M-direction is amazing
 
    M-Ret / m
    should bind it to s-m later...
+
+*** one :one:
+**** two :two:
+*** foo :one:three:
 
 *** agenda related stuff 
     [[file:org.pdf][here]] p.64

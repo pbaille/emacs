@@ -91,3 +91,21 @@ thing-at-point package
 C-h C-h is good for help
 
 abbrevs
+
+* Personal Customization
+
+frames, learn about it, navigate, save restore, bindings
+dired, setup a proper way to navigate and explore, leftsidebar style
+
+** Clojure 
+
+*** highlighting
+
+more precise syntax highlighting, see [[file:~/Code/Emacs/elisp/theme.el][theme]] and clojure-mode.el
+extract highlighting stuff from clojure-mode.el (see [[file:~/Code/Emacs/elisp/my-clojure-mode.el][my-clj-mode]])
+- anonymous fn  literal syntax
+- fn params ?? (destructuration could be tricky, ideally just bounded symbols, how about other binding macros?)
+
+
+
+

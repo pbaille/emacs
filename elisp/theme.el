@@ -24,6 +24,7 @@
 (deftheme perso
   "addition to gotham theme, made with scala in mind")
 
+
 (let ((class '((class color) (min-colors 89))))
 
   (custom-theme-set-faces
@@ -33,15 +34,18 @@
 
    ; `(font-lock-custom-face               ((,class (:foreground "#ff0000"))))
    `(font-lock-type-face                 ((,class (:foreground "#6a3e6f"))))
-   `(font-lock-string-face               ((,class (:foreground "#ce8f4e"))))
+   `(font-lock-string-face               ((,class (:foreground "#DF8F4E"))))
    `(font-lock-constant-face             ((,class (:foreground "#387485"))))
    `(font-lock-keyword-face              ((,class (:foreground "#31515a"))))
    `(font-lock-comment-face              ((,class (:foreground "#4c424d" :background "#292b2e"))))
    `(font-lock-function-name-face        ((,class (:foreground "#756C77"))))
+   `(font-lock-variable-name-face        ((,class (:foreground "#756C77" :bold t))))
    `(highlight-numbers-number            ((,class (:foreground "#c06534"))))
    `(font-lock-preprocessor-face         ((,class (:foreground "#ff8b4c"))))
    `(default                             ((,class (:foreground "#989a9a"))))
+   `(link                                ((,class (:foreground "#8E66BA"))))
    `(trailing-whitespace                 ((,class (:background "#091f2e"))))
+   `(font-lock-builtin-face              ((,class (:foreground "#1d78a3"))))
 
    `(scala-font-lock:abstract-face       ((,class (:foreground "#df6f5b"))))
    `(scala-font-lock:final-face          ((,class (:foreground "#df6f5b"))))
@@ -71,6 +75,54 @@
    `(rainbow-delimiters-depth-15-face     ((,class (:foreground "#aba7ac"))))
    `(rainbow-delimiters-unmatched-face   ((,class (:background "#000"))))
 
+   ;; org
+
+   `(org-level-1 ((,class (:foreground "#FFBC67"))))
+   `(org-level-2 ((,class (:foreground "#EF9C72"))))
+   `(org-level-3 ((,class (:foreground "#DA727E"))))
+   `(org-level-4 ((,class (:foreground "#cf4a85"))))
+   `(org-level-5 ((,class (:foreground "#DA727E"))))
+   `(org-level-6 ((,class (:foreground "#EF9C72"))))
+   `(org-level-7 ((,class (:foreground "#FFBC67"))))
+
+   `(org-todo ((,class (:foreground "#FF564D"))))
+   `(org-meta-line ((,class (:foreground "#5C4379"))))
+   `(org-link ((,class (:foreground "#8E66BA"))))
+   `(org-special-keyword ((,class (:foreground "#6F5079"))))
+   `(org-tag ((,class (:foreground "#05635E"))))
+
+   ;; dired
+   `(dired-directory ((,class (:foreground "#DA727E"))))
+   `(dired-header ((,class (:foreground "#6a3e6f"))))
+
+   `(treemacs-directory-face ((,class (:inherit default))))
+   `(treemacs-directory-collapsed-face ((,class (:inherit default))))
+   `(treemacs-root-face ((,class (:inherit default :height 160 :bold t))))
+
+   ;; clojure
+
+   ;`(clojure-keyword-face ((,class (:foreground "#1d78a3"))))
+   `(clojure-nsprefix-face ((,class (:bold t))))
+   `(cider-repl-stderr-face ((,class (:inherit default))))
+   `(cider-repl-stdout-face ((,class (:inherit default))))
+   ;`(clojure-boolean-face ((,class (:foreground "#D446C3" :bold t))))
+   ;`(clojure-character-face ((,class (:foreground "#BE1017"))))
+   ;`(clojure-quotedsym-face ((,class (:foreground "#D45D64"))))
+
+   ;; should be replaced
+   `(font-lock-function-name-face ((,class (:foreground "#EB6635"))))
+   `(font-lock-variable-name-face ((,class (:foreground "#EB6635" :bold t))))
+   `(font-lock-doc-face ((,class (:foreground "#656666"))))
+
+   ;`(clojure-coremacro-face ((,class (:foreground "yellow"))))
+   ;`(clojure-fname-face ((,class (:foreground "pink" :bold t))))
+   ;`(clojure-varname-face ((,class (:foreground "pink" :bold t))))
+   ;`(clojure-type-face ((,class (:foreground "red"))))
+   ;`(clojure-lambdargs-face ((,class (:foreground "purple"))))
+
+   ;`(highlight-numbers-number ((,class (:foreground "#DEAEC3"))))
+   ;`(link ((,class (:foreground "#8E66BA"))))
+
    ))
 
 (custom-theme-set-variables
@@ -79,6 +131,9 @@
 			    "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"]))
 
 (provide-theme 'perso)
+
+
+
 
 ;; Local Variables:
 ;; no-byte-compile: t
