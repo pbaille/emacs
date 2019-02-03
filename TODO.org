@@ -4,3 +4,6 @@ Global colors plist and use it in themes files
 See window bug with treemacs (reproduce with opening doc or cider error)
 Split main.el
 
+use 'pp-eval-expression (pretty print)
+
+

@@ -24,7 +24,6 @@
 (deftheme perso
   "addition to gotham theme, made with scala in mind")
 
-
 (let ((class '((class color) (min-colors 89))))
 
   (custom-theme-set-faces
@@ -107,7 +106,7 @@
    `(cider-repl-stdout-face ((,class (:inherit default))))
    ;`(clojure-boolean-face ((,class (:foreground "#D446C3" :bold t))))
    ;`(clojure-character-face ((,class (:foreground "#BE1017"))))
-   ;`(clojure-quotedsym-face ((,class (:foreground "#D45D64"))))
+                                        ;`(clojure-quotedsym-face ((,class (:foreground "#D45D64"))))
 
    ;; should be replaced
    `(font-lock-function-name-face ((,class (:foreground "#EB6635"))))

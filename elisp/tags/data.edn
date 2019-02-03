@@ -1,0 +1,24 @@
+;; sample data for the 'tags' project
+
+;; entry 1
+{:type :url
+ :content "https://lichess.org/"
+ :description "lichess"
+ :timestamp [2019 01 08 10 07 57]
+ :tags #{:games.chess
+         :entertainment}}
+
+;; entry 2
+{:type :md
+ :content
+ "# One
+blabla
+# Two
+another cat
+## Sub cat
+sub content"
+ :description "md test 1"
+:timestamp [2019 01 08 10 12 37]
+ :tags #{:misc
+         :documentation.foo}}
+

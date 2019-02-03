@@ -14,6 +14,18 @@
          (declare (indent defun))
          `(defun ,name ,args (interactive) ,@xs))
 
+       (font-lock-add-keywords
+        'emacs-lisp-mode
+        '(("(\\(idefun\\)\\_>\\s *\\(\\(?:\\sw\\|\\s_\\)+\\)?"
+           (1 font-lock-keyword-face nil t)
+           (2 font-lock-function-name-face nil t))))
+
+       ;; (cdr font-lock-keywords-alist)
+
+       ;; (pp-eval-expression 'font-lock-keywords-alist)
+
+       ;; (pp-eval-expression)
+
        (defmacro mexp (f) `(macroexpand ,f))
 
        (comment

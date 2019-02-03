@@ -1,0 +1,3 @@
+[submodule "elisp/nav"]
+	path = elisp/nav
+	url = git@gitlab.com:pbaille/nav.git

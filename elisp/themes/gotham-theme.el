@@ -54,7 +54,7 @@ customized 16-color palette."
                   (const :tag "256 colors" t))
   :group 'gotham)
 
-(defvar gotham-color-alist
+(defvar tem-color-alist
   `((base0   "#0c1014" ,(if gotham-tty-256-colors "color-232" "black"))
     (base1   "#11151c" ,(if gotham-tty-256-colors "color-233" "brightblack"))
     (base2   "#091f2e" ,(if gotham-tty-256-colors "color-17"  "brightgreen"))
@@ -98,7 +98,7 @@ the rules that are applied to the face attributes."
 (defun gotham-transform-spec (spec display)
   "Helper function that transforms SPEC for DISPLAY.
 DISPLAY is either 'graphic or 'tty, SPEC is a property list where
-the values are substituted with colors from `gotham-color-alist'
+the values are substituted with colors from `tem-color-alist'
 depending on DISPLAY for keys which are either :foreground or
 :background.  All other key-value combinations remain unchanged."
   (let (output)
@@ -107,7 +107,7 @@ depending on DISPLAY for keys which are either :foreground or
              (value (cadr spec))
              (index (cond ((eq display 'graphic) 1)
                           ((eq display 'tty) 2)))
-             (color (nth index (assoc value gotham-color-alist))))
+             (color (nth index (assoc value tem-color-alist))))
         (cond
          ((and (memq key '(:box :underline)) (listp value))
           (setq output (append output

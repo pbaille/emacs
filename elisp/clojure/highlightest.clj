@@ -33,6 +33,8 @@
  "string top"
 
  \a
+ \A
+ 
 
  :clojure.core/defn
 
@@ -46,7 +48,10 @@
 
  #"regex era"
 
+ #yo
+ #"yo"
 
+ (a bio poi (yui [:foo "ert" 67] #{'ert}))
 
  )
 
