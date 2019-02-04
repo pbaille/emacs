@@ -1,8 +1,6 @@
 ;; -*- lexical-binding: t -*-
 
-;; horizontal scroll ------------------------------------------
-
-;; scrolling -------------------------------------------------
+;; horizontal scroll -----------------------------------------
 (comment
  (global-set-key [wheel-right] 'smooth-scroll/scroll-left)
  (global-set-key [wheel-left] 'smooth-scroll/scroll-right)
@@ -55,73 +53,94 @@
 
   (comment
    (macroexpand '(mk-prefix yop "a" 'pouet))
-   (mk-prefix yop+ "a" 'pouet)))
+   (mk-prefix yop+ "a" 'pouet)
+   (macroexpand-1
+    '(prettify-replace
+      'emacs-lisp-mode
+      ("zert" "ze..")
+      ("azer" "az.." font-lock-builtin-face)))))
 
-
-
-font-lock-keywords-alist
-
-(idefun)
-
-(macroexpand-1
- '(prettify-replace
-   'emacs-lisp-mode
-   ("zert" "ze..")
-   ("azer" "az.." font-lock-builtin-face)))
-
-;; personal menu ----------------------------------------------
-
-(setq pb-keymap (make-sparse-keymap))
-(defk "<f1>" pb-keymap)
-
-(defmks pb-keymap
-  "b" 'buffers+
-  "w" 'windows+
-  "d" 'describe+
-  "t" 'shell+
-  "e" 'eval+)
-
-;; eval -------------------
-
-(mk-prefix eval+
-           "c" 'peval-current
-           "e" 'peval-enclosing)
-
+;; personal menu ---------------------------------------------
 (progn
 
-  (defun peval-current ()
-    (interactive)
-    (save-excursion
-      (goto-char (sp-get (sp-get-thing) :end))
-      (call-interactively 'pp-eval-last-sexp)))
+  (setq pb-keymap (make-sparse-keymap))
+  (defk "<f1>" pb-keymap)
 
-  (defun peval-enclosing ()
-    (interactive)
-    (save-excursion
-      (goto-char (sp-get (sp-get-enclosing-sexp) :end))
-      (call-interactively 'pp-eval-last-sexp))))
+  (defmks pb-keymap
+    "TAB" 'fold+
+    "b" 'buffers+
+    "w" 'windows+
+    "d" 'describe+
+    "t" 'shell+
+    "e" 'eval+)
 
-;; windows ----------------
+  ;; folding ----------------
 
-(mk-prefix windows+
-           "r" 'window-iresize
-           )
+  (mk-prefix fold+
+             "a" 'yafolding-toggle-all
+             "e" 'yafolding-toggle-element
+             )
 
-(progn
+  (comment
+   (defhydra hydra-origami (:color red)
+     "
+  _o_pen node    _n_ext fold       toggle _f_orward
+  _c_lose node   _p_revious fold   toggle _a_ll
+  "
+     ("o" origami-open-node)
+     ("c" origami-close-node)
+     ("n" origami-next-fold)
+     ("p" origami-previous-fold)
+     ("f" origami-forward-toggle-node)
+     ("a" origami-toggle-all-nodes)))
 
-  (def-iloop window-iresize
-    "press t to enlarge or e to shrink"
-    ("i"
-     (enlarge-window 1))
-    ("k"
-     (enlarge-window -1))
-    ("j"
-     (enlarge-window -1 t))
-    ("l"
-     (enlarge-window 1 t))
-    ))
+  ;; buffers ----------------
 
-;; pretty syms ---------------------------------------------
+  (mk-prefix buffers+
+             "m" 'popwin:messages)
+
+  ;; eval -------------------
+
+  (mk-prefix eval+
+             "c" 'peval-current
+             "e" 'peval-enclosing)
+
+  (progn
+
+    (defun peval-current ()
+      (interactive)
+      (save-excursion
+        (goto-char (sp-get (sp-get-thing) :end))
+        (call-interactively 'pp-eval-last-sexp)))
+
+    (defun peval-enclosing ()
+      (interactive)
+      (save-excursion
+        (goto-char (sp-get (sp-get-enclosing-sexp) :end))
+        (call-interactively 'pp-eval-last-sexp))))
+
+  ;; windows ----------------
+
+  (mk-prefix windows+
+             "r" 'window-iresize
+             )
+
+  (progn
+
+    (def-iloop window-iresize
+      "press t to enlarge or e to shrink"
+      ("i"
+       (enlarge-window 1))
+      ("k"
+       (enlarge-window -1))
+      ("j"
+       (enlarge-window -1 t))
+      ("l"
+       (enlarge-window 1 t))
+      ))
+  )
+
+;; pretty syms -----------------------------------------------
 (progn
 
   (push 'display font-lock-extra-managed-props) ;; Allow removal of display property by font-lock
@@ -146,7 +165,7 @@ font-lock-keywords-alist
    ("idefun" "ƒi" font-lock-keyword-face)
    ("azerty" "az.." font-lock-keyword-face)))
 
-;; abbrevs ----------------------------------------------------
+;; abbrevs ---------------------------------------------------
 (comment
 
  (define-abbrev-table 'global-abbrev-table
@@ -158,7 +177,7 @@ font-lock-keywords-alist
 
  (<= 1 2))
 
-;; Fira code --------------------------------------------------
+;; Fira code -------------------------------------------------
 (progn
 
   ;; www  \ue100     **   \ue101    ***  \ue102    **/  \ue103
@@ -253,16 +272,7 @@ font-lock-keywords-alist
 
   )
 
-
-
-
-
-
-
-
-
-
-
+;; colors ----------------------------------------------------
 (setq pb-colors
 
       '((sienna-1  . "#9a8f8b")
